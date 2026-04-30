@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:remote_content_explorer/core/constants/routes.dart';
+import 'package:remote_content_explorer/core/constants/strings.dart';
+import 'package:remote_content_explorer/core/theme/theme.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +12,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: AppStrings.appName,
+      initialRoute: AppRoutes.initialRoute,
+      theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      routes: AppRoutes.getRoutes(),
+      home: const Scaffold(body: Center(child: Text('Hello World!'))),
     );
   }
 }
