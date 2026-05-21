@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'interceptors/logging_interceptor.dart';
+
+part 'dio_provider.g.dart';
 
 // NOTA: Por efectos prácticos, el API key de The Movie DB se hardcodea aquí.
 // Este key será dado de baja en cuanto se revise el código de la aplicación.
@@ -14,6 +17,8 @@ Dio dio(Ref ref) {
   dio.options.queryParameters = {'api_key': _tmdbApiKey, 'language': 'es-ES'};
   dio.options.headers['Content-Type'] = 'application/json; charset=utf-8';
   dio.options.contentType = 'application/json';
+  dio.options.connectTimeout = const Duration(seconds: 5);
+  dio.options.receiveTimeout = const Duration(seconds: 5);
   dio.interceptors.add(LoggingInterceptor());
   return dio;
 }

@@ -28,42 +28,54 @@ class AppTheme {
     required Color secondary,
     required Color appBarBg,
     required Color appBarFg,
-  }) => ThemeData(
-    useMaterial3: true,
-    fontFamily: 'Poppins',
-    colorScheme: ColorScheme.fromSeed(
+  }) {
+    final colorScheme = ColorScheme.fromSeed(
       seedColor: primary,
       primary: primary,
       secondary: secondary,
       brightness: brightness,
       surface: bg,
-    ),
-    scaffoldBackgroundColor: bg,
-    textTheme: _textTheme(primary, secondary),
-    appBarTheme: AppBarTheme(
-      centerTitle: true,
-      elevation: 0,
-      backgroundColor: appBarBg,
-      foregroundColor: appBarFg,
-    ),
-    cardColor: brightness == Brightness.light
-        ? Colors.white
-        : const Color(0xFF2C2C2C),
-    cardTheme: CardThemeData(
-      color: brightness == Brightness.light
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      fontFamily: 'Poppins',
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: bg,
+      textTheme: _textTheme(primary, secondary),
+      appBarTheme: AppBarTheme(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: appBarBg,
+        foregroundColor: appBarFg,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: colorScheme.outline,
+        ),
+        border: InputBorder.none,
+      ),
+      cardColor: brightness == Brightness.light
           ? Colors.white
           : const Color(0xFF2C2C2C),
-      elevation: 0,
-      margin: EdgeInsets.zero,
-    ),
-  );
+      cardTheme: CardThemeData(
+        color: brightness == Brightness.light
+            ? Colors.white
+            : const Color(0xFF2C2C2C),
+        elevation: 0,
+        margin: EdgeInsets.zero,
+      ),
+    );
+  }
 
   static TextTheme _textTheme(Color primary, Color secondary) => TextTheme(
     titleLarge: TextStyle(
       fontFamily: 'Poppins',
-      fontWeight: FontWeight.bold,
-      fontStyle: FontStyle.italic,
-      fontSize: 32,
+      fontWeight: FontWeight.w400,
+      fontStyle: FontStyle.normal,
+      fontSize: 15,
       color: primary,
     ),
     titleMedium: TextStyle(

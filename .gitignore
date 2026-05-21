@@ -47,5 +47,9 @@ app.*.map.json
 pubspec.lock
 .env
 
+# Generated files
+*.g.dart
+*.freezed.dart
+
 # Claude related
 .claude

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/core/constants/routes.dart';
 import 'package:remote_content_explorer/core/constants/strings.dart';
 import 'package:remote_content_explorer/core/theme/theme.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
@@ -19,7 +20,6 @@ class MainApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       routes: AppRoutes.getRoutes(),
-      home: const Scaffold(body: Center(child: Text('Hello World!'))),
     );
   }
 }
