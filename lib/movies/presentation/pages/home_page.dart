@@ -159,52 +159,54 @@ class _MovieSearchDelegate extends SearchDelegate<void> {
 
     ref.read(movieSearchProvider.notifier).search(query);
 
-    final state = ref.watch(movieSearchProvider);
+    return Consumer(
+      builder: (context, ref, _) {
+        final state = ref.watch(movieSearchProvider);
 
-    if (state.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    if (state.hasError) {
-      return Center(
-        child: Text(
-          'Error al buscar. Verifica tu conexión.',
-          style: TextStyle(
-            fontSize: 13,
-            color: Theme.of(context).colorScheme.outline,
-          ),
-        ),
-      );
-    }
-
-    if (state.movies.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.search_off_rounded,
-              size: 48,
-              color: Theme.of(context).colorScheme.outlineVariant,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Sin resultados para "$query"',
+        if (state.hasError) {
+          return Center(
+            child: Text(
+              'Error al buscar. Verifica tu conexión.',
               style: TextStyle(
                 fontSize: 13,
                 color: Theme.of(context).colorScheme.outline,
               ),
             ),
-          ],
-        ),
-      );
-    }
+          );
+        }
 
-    return ListView.builder(
-      itemCount: state.movies.length,
-      itemBuilder: (context, index) {
-        final movie = state.movies[index];
-        return ListTile(
+        if (state.movies.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.search_off_rounded,
+                  size: 48,
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Sin resultados para "$query"',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: state.movies.length,
+          itemBuilder: (context, index) {
+            final movie = state.movies[index];
+            return ListTile(
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 4,
@@ -262,5 +264,8 @@ class _MovieSearchDelegate extends SearchDelegate<void> {
         );
       },
     );
+      },
+    );
   }
 }
+
