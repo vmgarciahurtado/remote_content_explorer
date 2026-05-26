@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:remote_content_explorer/movies/presentation/pages/home_page.dart';
-import 'package:remote_content_explorer/movies/presentation/pages/movie_detail_page.dart';
+import 'package:remote_content_explorer/features/movies/presentation/pages/home_page.dart';
+import 'package:remote_content_explorer/features/movies/presentation/pages/movie_detail_page.dart';
 
 class AppRoutes {
   AppRoutes._();
