@@ -1,13 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/features/movies/di/movies_di.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/movie_list_state.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'movie_search_notifier.g.dart';
+final movieSearchProvider =
+    NotifierProvider<MovieSearchNotifier, MovieListState>(MovieSearchNotifier.new);
 
-@riverpod
-class MovieSearchNotifier extends _$MovieSearchNotifier {
+class MovieSearchNotifier extends Notifier<MovieListState> {
   Timer? _debounce;
   String _currentQuery = '';
 

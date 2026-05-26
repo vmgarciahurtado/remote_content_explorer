@@ -1,23 +1,40 @@
 import 'package:dio/dio.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/models/cast_response.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/models/movie_response.dart';
-import 'package:retrofit/retrofit.dart';
 
-part 'movie_remote_datasource.g.dart';
+class MovieRemoteDatasource {
+  MovieRemoteDatasource(this._dio);
 
-@RestApi()
-abstract class MovieRemoteDatasource {
-  factory MovieRemoteDatasource(Dio dio) = _MovieRemoteDatasource;
+  final Dio _dio;
 
-  @GET('movie/now_playing')
-  Future<MovieResponse> getNowPlaying({@Query('page') int page = 1});
+  Future<MovieResponse> getNowPlaying({int page = 1}) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      'movie/now_playing',
+      queryParameters: {'page': page},
+    );
+    return MovieResponse.fromJson(response.data!);
+  }
 
-  @GET('movie/popular')
-  Future<MovieResponse> getPopular({@Query('page') int page = 1});
+  Future<MovieResponse> getPopular({int page = 1}) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      'movie/popular',
+      queryParameters: {'page': page},
+    );
+    return MovieResponse.fromJson(response.data!);
+  }
 
-  @GET('movie/{id}/credits')
-  Future<CastResponse> getMovieCast(@Path('id') int movieId);
+  Future<CastResponse> getMovieCast(int movieId) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      'movie/$movieId/credits',
+    );
+    return CastResponse.fromJson(response.data!);
+  }
 
-  @GET('search/movie')
-  Future<MovieResponse> searchMovies({@Query('query') required String query});
+  Future<MovieResponse> searchMovies({required String query}) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      'search/movie',
+      queryParameters: {'query': query},
+    );
+    return MovieResponse.fromJson(response.data!);
+  }
 }

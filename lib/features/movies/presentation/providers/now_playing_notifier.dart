@@ -1,11 +1,11 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/features/movies/di/movies_di.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/movie_list_state.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'now_playing_notifier.g.dart';
+final nowPlayingProvider =
+    NotifierProvider<NowPlayingNotifier, MovieListState>(NowPlayingNotifier.new);
 
-@riverpod
-class NowPlayingNotifier extends _$NowPlayingNotifier {
+class NowPlayingNotifier extends Notifier<MovieListState> {
   int _currentPage = 0;
 
   @override

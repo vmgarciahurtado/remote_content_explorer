@@ -1,17 +1,12 @@
 import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'interceptors/logging_interceptor.dart';
 
-part 'dio_provider.g.dart';
-
-// NOTA: Por efectos prácticos, el API key de The Movie DB se hardcodea aquí.
-// Este key será dado de baja en cuanto se revise el código de la aplicación.
 const _tmdbApiKey = '9b31efe96a35c640012f380f12ee2b86';
 const _tmdbBaseUrl = 'https://api.themoviedb.org/3/';
 
-@riverpod
-Dio dio(Ref ref) {
+final dioProvider = Provider<Dio>((ref) {
   final dio = Dio();
   dio.options.baseUrl = _tmdbBaseUrl;
   dio.options.queryParameters = {'api_key': _tmdbApiKey, 'language': 'es-ES'};
@@ -21,4 +16,4 @@ Dio dio(Ref ref) {
   dio.options.receiveTimeout = const Duration(seconds: 5);
   dio.interceptors.add(LoggingInterceptor());
   return dio;
-}
+});
