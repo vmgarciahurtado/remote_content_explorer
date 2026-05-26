@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -32,7 +31,7 @@ void main() {
       // given
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => Right([_tMovie(id: 1)]));
+      ).thenAnswer((_) async => ([_tMovie(id: 1)], null));
 
       // when
       final container = makeContainer();
@@ -52,10 +51,10 @@ void main() {
       // given
       when(
         () => mockUseCase.call(page: 1),
-      ).thenAnswer((_) async => Right([_tMovie(id: 1)]));
+      ).thenAnswer((_) async => ([_tMovie(id: 1)], null));
       when(
         () => mockUseCase.call(page: 2),
-      ).thenAnswer((_) async => Right([_tMovie(id: 2)]));
+      ).thenAnswer((_) async => ([_tMovie(id: 2)], null));
 
       final container = makeContainer();
       container.listen(popularMoviesProvider, (_, _) {});
@@ -77,7 +76,7 @@ void main() {
       // given — first call fails
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => const Left(NetworkFailure()));
+      ).thenAnswer((_) async => (null, const NetworkFailure()));
 
       final container = makeContainer();
       container.listen(popularMoviesProvider, (_, _) {});
@@ -87,7 +86,7 @@ void main() {
       // when — retry succeeds
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => Right([_tMovie(id: 1)]));
+      ).thenAnswer((_) async => ([_tMovie(id: 1)], null));
       await container.read(popularMoviesProvider.notifier).retry();
 
       // then

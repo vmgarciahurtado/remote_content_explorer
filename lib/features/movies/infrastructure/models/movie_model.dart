@@ -1,8 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'movie_model.g.dart';
-
-@JsonSerializable(createToJson: false)
 class MovieModel {
   const MovieModel({
     required this.id,
@@ -23,29 +18,37 @@ class MovieModel {
 
   final int id;
   final String title;
-  @JsonKey(name: 'original_title')
   final String originalTitle;
   final String overview;
-  @JsonKey(name: 'poster_path', defaultValue: '')
   final String posterPath;
-  @JsonKey(name: 'backdrop_path', defaultValue: '')
   final String backdropPath;
-  @JsonKey(name: 'release_date', defaultValue: '')
   final String releaseDate;
   final double popularity;
-  @JsonKey(name: 'vote_average')
   final double voteAverage;
-  @JsonKey(name: 'vote_count')
   final int voteCount;
-  @JsonKey(name: 'genre_ids', defaultValue: [])
   final List<int> genreIds;
-  @JsonKey(defaultValue: false)
   final bool adult;
-  @JsonKey(defaultValue: false)
   final bool video;
-  @JsonKey(name: 'original_language', defaultValue: '')
   final String originalLanguage;
 
-  factory MovieModel.fromJson(Map<String, dynamic> json) =>
-      _$MovieModelFromJson(json);
+  factory MovieModel.fromJson(Map<String, dynamic> json) => MovieModel(
+    id: (json['id'] as num).toInt(),
+    title: json['title'] as String,
+    originalTitle: json['original_title'] as String,
+    overview: json['overview'] as String,
+    posterPath: json['poster_path'] as String? ?? '',
+    backdropPath: json['backdrop_path'] as String? ?? '',
+    releaseDate: json['release_date'] as String? ?? '',
+    popularity: (json['popularity'] as num).toDouble(),
+    voteAverage: (json['vote_average'] as num).toDouble(),
+    voteCount: (json['vote_count'] as num).toInt(),
+    genreIds:
+        (json['genre_ids'] as List<dynamic>?)
+            ?.map((e) => (e as num).toInt())
+            .toList() ??
+        [],
+    adult: json['adult'] as bool? ?? false,
+    video: json['video'] as bool? ?? false,
+    originalLanguage: json['original_language'] as String? ?? '',
+  );
 }

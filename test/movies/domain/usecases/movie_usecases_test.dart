@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
@@ -29,14 +28,14 @@ void main() {
         // given
         when(
           () => mockRepository.getNowPlaying(page: any(named: 'page')),
-        ).thenAnswer((_) async => Right([_tMovie()]));
+        ).thenAnswer((_) async => ([_tMovie()], null));
         final useCase = GetNowPlayingMovies(mockRepository);
 
         // when
         final result = await useCase.call(page: 2);
 
         // then
-        expect(result.isRight(), isTrue);
+        expect(result.$2, isNull);
         verify(() => mockRepository.getNowPlaying(page: 2)).called(1);
       },
     );
@@ -51,14 +50,14 @@ void main() {
         // given
         when(
           () => mockRepository.getPopular(page: any(named: 'page')),
-        ).thenAnswer((_) async => Right([_tMovie()]));
+        ).thenAnswer((_) async => ([_tMovie()], null));
         final useCase = GetPopularMovies(mockRepository);
 
         // when
         final result = await useCase.call(page: 3);
 
         // then
-        expect(result.isRight(), isTrue);
+        expect(result.$2, isNull);
         verify(() => mockRepository.getPopular(page: 3)).called(1);
       },
     );
@@ -73,14 +72,14 @@ void main() {
         // given
         when(
           () => mockRepository.searchMovies(any()),
-        ).thenAnswer((_) async => Right([_tMovie()]));
+        ).thenAnswer((_) async => ([_tMovie()], null));
         final useCase = SearchMovies(mockRepository);
 
         // when
         final result = await useCase.call('batman');
 
         // then
-        expect(result.isRight(), isTrue);
+        expect(result.$2, isNull);
         verify(() => mockRepository.searchMovies('batman')).called(1);
       },
     );
@@ -93,14 +92,14 @@ void main() {
       // given
       when(
         () => mockRepository.getMovieCast(any()),
-      ).thenAnswer((_) async => Right([_tActor()]));
+      ).thenAnswer((_) async => ([_tActor()], null));
       final useCase = GetMovieCast(mockRepository);
 
       // when
       final result = await useCase.call(42);
 
       // then
-      expect(result.isRight(), isTrue);
+      expect(result.$2, isNull);
       verify(() => mockRepository.getMovieCast(42)).called(1);
     });
   });

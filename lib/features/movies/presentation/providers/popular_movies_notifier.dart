@@ -20,20 +20,19 @@ class PopularMoviesNotifier extends _$PopularMoviesNotifier {
     _isFetching = true;
     _currentPage++;
 
-    final result = await ref
+    final (movies, failure) = await ref
         .read(getPopularMoviesProvider)
         .call(page: _currentPage);
 
-    result.fold(
-      (failure) {
-        _currentPage--;
-        state = state.copyWith(isLoading: false, hasError: true);
-      },
-      (movies) => state = MovieListState(
-        movies: [...state.movies, ...movies],
+    if (failure != null) {
+      _currentPage--;
+      state = state.copyWith(isLoading: false, hasError: true);
+    } else {
+      state = MovieListState(
+        movies: [...state.movies, ...movies!],
         isLoading: false,
-      ),
-    );
+      );
+    }
 
     _isFetching = false;
   }

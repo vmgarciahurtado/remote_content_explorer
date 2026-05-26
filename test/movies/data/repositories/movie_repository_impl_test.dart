@@ -23,30 +23,25 @@ void main() {
   group('MovieRepositoryImpl', () {
     test('given the datasource returns a movie response '
         'when getNowPlaying is called '
-        'then returns Right with the mapped movies', () async {
+        'then returns the mapped movies with no failure', () async {
       // given
       when(
         () => mockDatasource.getNowPlaying(page: any(named: 'page')),
       ).thenAnswer((_) async => _tMovieResponse());
 
       // when
-      final result = await repository.getNowPlaying();
+      final (movies, failure) = await repository.getNowPlaying();
 
       // then
-      expect(result.isRight(), isTrue);
-      result.fold((_) => fail('Expected Right'), (movies) {
-        expect(movies.length, 1);
-        expect(movies.first.id, 1);
-        expect(
-          movies.first.posterPath,
-          'https://image.tmdb.org/t/p/w500/poster.jpg',
-        );
-      });
+      expect(failure, isNull);
+      expect(movies!.length, 1);
+      expect(movies.first.id, 1);
+      expect(movies.first.posterPath, 'https://image.tmdb.org/t/p/w500/poster.jpg');
     });
 
     test('given the datasource throws a DioException '
         'when getNowPlaying is called '
-        'then returns Left with the appropriate failure', () async {
+        'then returns the appropriate failure', () async {
       // given
       when(
         () => mockDatasource.getNowPlaying(page: any(named: 'page')),
@@ -61,75 +56,60 @@ void main() {
       );
 
       // when
-      final result = await repository.getNowPlaying();
+      final (_, failure) = await repository.getNowPlaying();
 
       // then
-      expect(result.isLeft(), isTrue);
-      result.fold(
-        (f) => expect(f, isA<UnauthorizedFailure>()),
-        (_) => fail(''),
-      );
+      expect(failure, isA<UnauthorizedFailure>());
     });
 
     test('given the datasource returns a movie response '
         'when getPopular is called '
-        'then returns Right with the mapped movies', () async {
+        'then returns the mapped movies with no failure', () async {
       // given
       when(
         () => mockDatasource.getPopular(page: any(named: 'page')),
       ).thenAnswer((_) async => _tMovieResponse());
 
       // when
-      final result = await repository.getPopular();
+      final (movies, failure) = await repository.getPopular();
 
       // then
-      expect(result.isRight(), isTrue);
-      result.fold(
-        (_) => fail('Expected Right'),
-        (movies) => expect(movies.first.id, 1),
-      );
+      expect(failure, isNull);
+      expect(movies!.first.id, 1);
     });
 
     test('given the datasource returns a movie response '
         'when searchMovies is called '
-        'then returns Right with the mapped movies', () async {
+        'then returns the mapped movies with no failure', () async {
       // given
       when(
         () => mockDatasource.searchMovies(query: any(named: 'query')),
       ).thenAnswer((_) async => _tMovieResponse());
 
       // when
-      final result = await repository.searchMovies('batman');
+      final (movies, failure) = await repository.searchMovies('batman');
 
       // then
-      expect(result.isRight(), isTrue);
-      result.fold(
-        (_) => fail('Expected Right'),
-        (movies) => expect(movies.first.title, 'Test Movie'),
-      );
+      expect(failure, isNull);
+      expect(movies!.first.title, 'Test Movie');
     });
 
     test('given the datasource returns a cast response '
         'when getMovieCast is called '
-        'then returns Right with the mapped actors', () async {
+        'then returns the mapped actors with no failure', () async {
       // given
       when(
         () => mockDatasource.getMovieCast(any()),
       ).thenAnswer((_) async => _tCastResponse());
 
       // when
-      final result = await repository.getMovieCast(1);
+      final (actors, failure) = await repository.getMovieCast(1);
 
       // then
-      expect(result.isRight(), isTrue);
-      result.fold((_) => fail('Expected Right'), (actors) {
-        expect(actors.length, 1);
-        expect(actors.first.name, 'John Doe');
-        expect(
-          actors.first.profilePath,
-          'https://image.tmdb.org/t/p/w185/profile.jpg',
-        );
-      });
+      expect(failure, isNull);
+      expect(actors!.length, 1);
+      expect(actors.first.name, 'John Doe');
+      expect(actors.first.profilePath, 'https://image.tmdb.org/t/p/w185/profile.jpg');
     });
   });
 }

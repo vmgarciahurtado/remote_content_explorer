@@ -1,8 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'actor_model.g.dart';
-
-@JsonSerializable(createToJson: false)
 class ActorModel {
   const ActorModel({
     required this.id,
@@ -13,11 +8,13 @@ class ActorModel {
 
   final int id;
   final String name;
-  @JsonKey(defaultValue: '')
   final String character;
-  @JsonKey(name: 'profile_path')
   final String? profilePath;
 
-  factory ActorModel.fromJson(Map<String, dynamic> json) =>
-      _$ActorModelFromJson(json);
+  factory ActorModel.fromJson(Map<String, dynamic> json) => ActorModel(
+    id: (json['id'] as num).toInt(),
+    name: json['name'] as String,
+    character: json['character'] as String? ?? '',
+    profilePath: json['profile_path'] as String?,
+  );
 }

@@ -196,7 +196,8 @@ class _CastSection extends StatelessWidget {
   }
 
   Future<List<Actor>> _loadCast() async {
-    final result = await ref.read(getMovieCastProvider).call(movieId);
-    return result.fold((_) => [], (actors) => actors);
+    final (actors, failure) = await ref.read(getMovieCastProvider).call(movieId);
+    if (failure != null) return [];
+    return actors!;
   }
 }

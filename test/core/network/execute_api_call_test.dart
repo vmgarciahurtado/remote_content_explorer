@@ -8,103 +8,98 @@ void main() {
     test(
       'given a successful call '
       'when executed '
-      'then returns Right with the value',
+      'then returns the value with no failure',
       () async {
         // given
         Future<String> call() async => 'data';
 
         // when
-        final result = await executeApiCall(call);
+        final (value, failure) = await executeApiCall(call);
 
         // then
-        expect(result.isRight(), isTrue);
-        result.fold((_) => fail('Expected Right'), (v) => expect(v, 'data'));
+        expect(failure, isNull);
+        expect(value, 'data');
       },
     );
 
     test(
       'given a DioException with status 401 '
       'when executed '
-      'then returns Left(UnauthorizedFailure)',
+      'then returns UnauthorizedFailure',
       () async {
         // given
         Future<String> call() async => throw _dioException(401);
 
         // when
-        final result = await executeApiCall(call);
+        final (_, failure) = await executeApiCall(call);
 
         // then
-        expect(result.isLeft(), isTrue);
-        result.fold((f) => expect(f, isA<UnauthorizedFailure>()), (_) => fail(''));
+        expect(failure, isA<UnauthorizedFailure>());
       },
     );
 
     test(
       'given a DioException with status 404 '
       'when executed '
-      'then returns Left(NotFoundFailure)',
+      'then returns NotFoundFailure',
       () async {
         // given
         Future<String> call() async => throw _dioException(404);
 
         // when
-        final result = await executeApiCall(call);
+        final (_, failure) = await executeApiCall(call);
 
         // then
-        expect(result.isLeft(), isTrue);
-        result.fold((f) => expect(f, isA<NotFoundFailure>()), (_) => fail(''));
+        expect(failure, isA<NotFoundFailure>());
       },
     );
 
     test(
       'given a DioException with status 500 '
       'when executed '
-      'then returns Left(ServerErrorFailure)',
+      'then returns ServerErrorFailure',
       () async {
         // given
         Future<String> call() async => throw _dioException(500);
 
         // when
-        final result = await executeApiCall(call);
+        final (_, failure) = await executeApiCall(call);
 
         // then
-        expect(result.isLeft(), isTrue);
-        result.fold((f) => expect(f, isA<ServerErrorFailure>()), (_) => fail(''));
+        expect(failure, isA<ServerErrorFailure>());
       },
     );
 
     test(
       'given a DioException with no status code '
       'when executed '
-      'then returns Left(NetworkFailure)',
+      'then returns NetworkFailure',
       () async {
         // given
         Future<String> call() async =>
             throw DioException(requestOptions: RequestOptions(path: ''));
 
         // when
-        final result = await executeApiCall(call);
+        final (_, failure) = await executeApiCall(call);
 
         // then
-        expect(result.isLeft(), isTrue);
-        result.fold((f) => expect(f, isA<NetworkFailure>()), (_) => fail(''));
+        expect(failure, isA<NetworkFailure>());
       },
     );
 
     test(
       'given an unknown exception '
       'when executed '
-      'then returns Left(UnknownFailure)',
+      'then returns UnknownFailure',
       () async {
         // given
         Future<String> call() async => throw Exception('unexpected');
 
         // when
-        final result = await executeApiCall(call);
+        final (_, failure) = await executeApiCall(call);
 
         // then
-        expect(result.isLeft(), isTrue);
-        result.fold((f) => expect(f, isA<UnknownFailure>()), (_) => fail(''));
+        expect(failure, isA<UnknownFailure>());
       },
     );
   });

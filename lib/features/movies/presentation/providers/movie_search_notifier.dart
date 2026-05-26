@@ -30,11 +30,12 @@ class MovieSearchNotifier extends _$MovieSearchNotifier {
     _currentQuery = query;
     state = const MovieListState(isLoading: true);
 
-    final result = await ref.read(searchMoviesProvider).call(query.trim());
-    result.fold(
-      (_) => state = const MovieListState(hasError: true),
-      (movies) => state = MovieListState(movies: movies),
-    );
+    final (movies, failure) = await ref.read(searchMoviesProvider).call(query.trim());
+    if (failure != null) {
+      state = const MovieListState(hasError: true);
+    } else {
+      state = MovieListState(movies: movies!);
+    }
   }
 
   void clear() => _cancel();

@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -32,7 +31,7 @@ void main() {
       // given
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => Right([_tMovie()]));
+      ).thenAnswer((_) async => ([_tMovie()], null));
 
       // when
       final container = makeContainer();
@@ -52,7 +51,7 @@ void main() {
       // given
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => const Left(NetworkFailure()));
+      ).thenAnswer((_) async => (null, const NetworkFailure()));
 
       // when
       final container = makeContainer();
@@ -71,7 +70,7 @@ void main() {
       // given — first call fails
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => const Left(NetworkFailure()));
+      ).thenAnswer((_) async => (null, const NetworkFailure()));
 
       final container = makeContainer();
       container.listen(nowPlayingProvider, (_, _) {});
@@ -81,7 +80,7 @@ void main() {
       // when — second call succeeds
       when(
         () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => Right([_tMovie()]));
+      ).thenAnswer((_) async => ([_tMovie()], null));
       await container.read(nowPlayingProvider.notifier).retry();
 
       // then
