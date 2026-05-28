@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/core/constants/routes.dart';
-import 'package:remote_content_explorer/core/constants/strings.dart';
 import 'package:remote_content_explorer/core/theme/theme.dart';
 
 void main() async {
@@ -17,8 +16,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: AppStrings.appName,
-      initialRoute: AppRoutes.initialRoute,
+      title: 'Remote content explorer',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       routes: AppRoutes.getRoutes(),
