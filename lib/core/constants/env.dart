@@ -6,4 +6,5 @@ class Env {
   static String get imageBaseUrl => dotenv.env['IMAGE_BASE_URL'] ?? '';
   static String get actorImageBaseUrl =>
       dotenv.env['ACTOR_IMAGE_BASE_URL'] ?? '';
+  static String get noImageUrl => dotenv.env['NO_IMAGE_URL'] ?? '';
 }

@@ -27,6 +27,7 @@ void main() {
       mockDatasource,
       imageBaseUrl: tImageBaseUrl,
       actorImageBaseUrl: tActorImageBaseUrl,
+      noImageUrl: 'https://img.test/no_image.jpg',
     );
   });
 

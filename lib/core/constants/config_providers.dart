@@ -8,3 +8,7 @@ final Provider<String> imageBaseUrlProvider = Provider<String>((Ref ref) {
 final Provider<String> actorImageBaseUrlProvider = Provider<String>((Ref ref) {
   return Env.actorImageBaseUrl;
 });
+
+final Provider<String> noImageUrlProvider = Provider<String>((Ref ref) {
+  return Env.noImageUrl;
+});

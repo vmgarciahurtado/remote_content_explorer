@@ -6,6 +6,7 @@ import 'package:remote_content_explorer/features/movies/infrastructure/models/mo
 void main() {
   group('MovieModelMapper', () {
     const String tImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
+    const String tNoImageUrl = 'https://image.tmdb.org/t/p/w500/fallback.jpg';
 
     test('given a model with a non-empty poster path '
         'when toEntity is called '
@@ -14,7 +15,10 @@ void main() {
       final MovieModel model = _tMovieModel();
 
       // when
-      final Movie entity = model.toEntity(imageBaseUrl: tImageBaseUrl);
+      final Movie entity = model.toEntity(
+        imageBaseUrl: tImageBaseUrl,
+        noImageUrl: tNoImageUrl,
+      );
 
       // then
       expect(entity.posterPath, 'https://image.tmdb.org/t/p/w500/poster.jpg');
@@ -27,12 +31,15 @@ void main() {
       final MovieModel model = _tMovieModel(posterPath: '');
 
       // when
-      final Movie entity = model.toEntity(imageBaseUrl: tImageBaseUrl);
+      final Movie entity = model.toEntity(
+        imageBaseUrl: tImageBaseUrl,
+        noImageUrl: tNoImageUrl,
+      );
 
       // then
       expect(
         entity.posterPath,
-        'https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg',
+        tNoImageUrl,
       );
     });
 
@@ -43,12 +50,15 @@ void main() {
       final MovieModel model = _tMovieModel(backdropPath: '');
 
       // when
-      final Movie entity = model.toEntity(imageBaseUrl: tImageBaseUrl);
+      final Movie entity = model.toEntity(
+        imageBaseUrl: tImageBaseUrl,
+        noImageUrl: tNoImageUrl,
+      );
 
       // then
       expect(
         entity.backdropPath,
-        'https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg',
+        tNoImageUrl,
       );
     });
   });

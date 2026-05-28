@@ -16,12 +16,15 @@ class MovieRepositoryImpl implements MovieRepository {
     this._datasource, {
     required String imageBaseUrl,
     required String actorImageBaseUrl,
+    required String noImageUrl,
   }) : _imageBaseUrl = imageBaseUrl,
-       _actorImageBaseUrl = actorImageBaseUrl;
+       _actorImageBaseUrl = actorImageBaseUrl,
+       _noImageUrl = noImageUrl;
 
   final MovieRemoteDatasource _datasource;
   final String _imageBaseUrl;
   final String _actorImageBaseUrl;
+  final String _noImageUrl;
 
   @override
   Future<Result<List<Movie>>> getNowPlaying({int page = 1}) => executeApiCall(
@@ -29,7 +32,10 @@ class MovieRepositoryImpl implements MovieRepository {
         (await _datasource.getNowPlaying(
               page: page,
             )).results
-            .map((MovieModel m) => m.toEntity(imageBaseUrl: _imageBaseUrl))
+            .map((MovieModel m) => m.toEntity(
+                  imageBaseUrl: _imageBaseUrl,
+                  noImageUrl: _noImageUrl,
+                ))
             .toList(),
   );
 
@@ -39,7 +45,10 @@ class MovieRepositoryImpl implements MovieRepository {
         (await _datasource.getPopular(
               page: page,
             )).results
-            .map((MovieModel m) => m.toEntity(imageBaseUrl: _imageBaseUrl))
+            .map((MovieModel m) => m.toEntity(
+                  imageBaseUrl: _imageBaseUrl,
+                  noImageUrl: _noImageUrl,
+                ))
             .toList(),
   );
 
@@ -49,7 +58,10 @@ class MovieRepositoryImpl implements MovieRepository {
         (await _datasource.searchMovies(
               query: query,
             )).results
-            .map((MovieModel m) => m.toEntity(imageBaseUrl: _imageBaseUrl))
+            .map((MovieModel m) => m.toEntity(
+                  imageBaseUrl: _imageBaseUrl,
+                  noImageUrl: _noImageUrl,
+                ))
             .toList(),
   );
 
@@ -73,5 +85,6 @@ final Provider<MovieRepository> movieRepositoryProvider =
         ref.watch(movieRemoteDatasourceProvider),
         imageBaseUrl: ref.watch(imageBaseUrlProvider),
         actorImageBaseUrl: ref.watch(actorImageBaseUrlProvider),
+        noImageUrl: ref.watch(noImageUrlProvider),
       ),
     );
