@@ -10,7 +10,7 @@ void main() {
         'when fromJson is called '
         'then all fields are parsed correctly', () {
       // given
-      final json = {
+      final Map<String, Object> json = <String, Object>{
         'id': 1,
         'title': 'Batman',
         'original_title': 'Batman',
@@ -21,20 +21,20 @@ void main() {
         'popularity': 98.5,
         'vote_average': 7.3,
         'vote_count': 5432,
-        'genre_ids': [28, 12],
+        'genre_ids': <int>[28, 12],
         'adult': false,
         'video': false,
         'original_language': 'en',
       };
 
       // when
-      final model = MovieModel.fromJson(json);
+      final MovieModel model = MovieModel.fromJson(json);
 
       // then
       expect(model.id, 1);
       expect(model.title, 'Batman');
       expect(model.posterPath, '/batman.jpg');
-      expect(model.genreIds, [28, 12]);
+      expect(model.genreIds, <int>[28, 12]);
     });
   });
 
@@ -43,12 +43,12 @@ void main() {
         'when fromJson is called '
         'then results and pagination fields are parsed correctly', () {
       // given
-      final json = {
+      final Map<String, Object> json = <String, Object>{
         'page': 1,
         'total_pages': 10,
         'total_results': 200,
-        'results': [
-          {
+        'results': <Map<String, Object>>[
+          <String, Object>{
             'id': 1,
             'title': 'Batman',
             'original_title': 'Batman',
@@ -68,7 +68,7 @@ void main() {
       };
 
       // when
-      final response = MovieResponse.fromJson(json);
+      final MovieResponse response = MovieResponse.fromJson(json);
 
       // then
       expect(response.page, 1);
@@ -85,7 +85,7 @@ void main() {
       'then all fields including nullable profilePath are parsed correctly',
       () {
         // given
-        final json = {
+        final Map<String, Object> json = <String, Object>{
           'id': 10,
           'name': 'Christian Bale',
           'character': 'Bruce Wayne',
@@ -93,7 +93,7 @@ void main() {
         };
 
         // when
-        final model = ActorModel.fromJson(json);
+        final ActorModel model = ActorModel.fromJson(json);
 
         // then
         expect(model.id, 10);
@@ -108,10 +108,10 @@ void main() {
         'when fromJson is called '
         'then the id and cast list are parsed correctly', () {
       // given
-      final json = {
+      final Map<String, Object> json = <String, Object>{
         'id': 99,
-        'cast': [
-          {
+        'cast': <Map<String, Object?>>[
+          <String, Object?>{
             'id': 10,
             'name': 'Christian Bale',
             'character': 'Bruce Wayne',
@@ -121,7 +121,7 @@ void main() {
       };
 
       // when
-      final response = CastResponse.fromJson(json);
+      final CastResponse response = CastResponse.fromJson(json);
 
       // then
       expect(response.id, 99);

@@ -5,13 +5,13 @@ import 'package:remote_content_explorer/features/movies/presentation/pages/movie
 class AppRoutes {
   AppRoutes._();
 
-  static const initialRoute = '/';
-  static const movieDetail = '/movie-detail';
+  static const String initialRoute = '/';
+  static const String movieDetail = '/movie-detail';
 
   static Map<String, WidgetBuilder> getRoutes() {
-    return {
-      initialRoute: (_) => const HomePage(),
-      movieDetail: (_) => const MovieDetailPage(),
+    return <String, WidgetBuilder>{
+      initialRoute: (BuildContext _) => const HomePage(),
+      movieDetail: (BuildContext _) => const MovieDetailPage(),
     };
   }
 }

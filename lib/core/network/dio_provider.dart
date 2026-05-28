@@ -1,15 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:remote_content_explorer/core/constants/env.dart';
 
 import 'interceptors/logging_interceptor.dart';
 
-const _tmdbApiKey = '9b31efe96a35c640012f380f12ee2b86';
-const _tmdbBaseUrl = 'https://api.themoviedb.org/3/';
-
-final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio();
-  dio.options.baseUrl = _tmdbBaseUrl;
-  dio.options.queryParameters = {'api_key': _tmdbApiKey, 'language': 'es-ES'};
+final Provider<Dio> dioProvider = Provider<Dio>((Ref ref) {
+  final Dio dio = Dio();
+  dio.options.baseUrl = Env.baseUrl;
+  dio.options.queryParameters = <String, String>{
+    'api_key': Env.apiKey,
+    'language': 'es-ES',
+  };
   dio.options.headers['Content-Type'] = 'application/json; charset=utf-8';
   dio.options.contentType = 'application/json';
   dio.options.connectTimeout = const Duration(seconds: 5);

@@ -1,6 +1,11 @@
 import 'package:dio/dio.dart';
 
-import 'failure.dart';
+import 'error_handler/failure.dart';
+import 'error_handler/network_failure.dart';
+import 'error_handler/not_found_failure.dart';
+import 'error_handler/server_error_failure.dart';
+import 'error_handler/unauthorized_failure.dart';
+import 'error_handler/unknown_failure.dart';
 
 typedef Result<T> = Future<(T?, Failure?)>;
 

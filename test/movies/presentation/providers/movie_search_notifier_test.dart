@@ -1,24 +1,27 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/failure.dart';
-import 'package:remote_content_explorer/features/movies/di/movies_di.dart';
+import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
-import 'package:remote_content_explorer/features/movies/domain/usecases/search_movies.dart';
-import 'package:remote_content_explorer/features/movies/presentation/providers/movie_search_notifier.dart';
+import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/movie_list_provider.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/movie_search_provider.dart';
+import 'package:riverpod/src/framework.dart';
 
-class MockSearchMovies extends Mock implements SearchMovies {}
+class MockMovieRepository extends Mock implements MovieRepository {}
 
 void main() {
-  late MockSearchMovies mockUseCase;
+  late MockMovieRepository mockRepository;
 
   setUp(() {
-    mockUseCase = MockSearchMovies();
+    mockRepository = MockMovieRepository();
   });
 
   ProviderContainer makeContainer() {
-    final container = ProviderContainer(
-      overrides: [searchMoviesProvider.overrideWith((_) => mockUseCase)],
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        movieRepositoryProvider.overrideWith((_) => mockRepository),
+      ],
     );
     addTearDown(container.dispose);
     return container;
@@ -29,16 +32,16 @@ void main() {
         'when search is called '
         'then state remains empty without triggering a fetch', () {
       // given
-      final container = makeContainer();
+      final ProviderContainer container = makeContainer();
 
       // when
       container.read(movieSearchProvider.notifier).search('  ');
 
       // then
-      final state = container.read(movieSearchProvider);
+      final MovieListState state = container.read(movieSearchProvider);
       expect(state.movies, isEmpty);
       expect(state.isLoading, isFalse);
-      verifyNever(() => mockUseCase.call(any()));
+      verifyNever(() => mockRepository.searchMovies(any()));
     });
 
     test('given a valid query '
@@ -46,9 +49,9 @@ void main() {
         'then state contains the search results', () async {
       // given
       when(
-        () => mockUseCase.call(any()),
-      ).thenAnswer((_) async => ([_tMovie()], null));
-      final container = makeContainer();
+        () => mockRepository.searchMovies(any()),
+      ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+      final ProviderContainer container = makeContainer();
       container.listen(movieSearchProvider, (_, _) {});
 
       // when
@@ -56,7 +59,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 500));
 
       // then
-      final state = container.read(movieSearchProvider);
+      final MovieListState state = container.read(movieSearchProvider);
       expect(state.movies.length, 1);
       expect(state.hasError, isFalse);
     });
@@ -66,9 +69,9 @@ void main() {
         'then state has error', () async {
       // given
       when(
-        () => mockUseCase.call(any()),
+        () => mockRepository.searchMovies(any()),
       ).thenAnswer((_) async => (null, const NetworkFailure()));
-      final container = makeContainer();
+      final ProviderContainer container = makeContainer();
       container.listen(movieSearchProvider, (_, _) {});
 
       // when
@@ -76,7 +79,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 500));
 
       // then
-      final state = container.read(movieSearchProvider);
+      final MovieListState state = container.read(movieSearchProvider);
       expect(state.hasError, isTrue);
       expect(state.movies, isEmpty);
     });
@@ -85,18 +88,18 @@ void main() {
         'when clear is called '
         'then the debounce is cancelled and state resets', () {
       // given
-      final container = makeContainer();
+      final ProviderContainer container = makeContainer();
       container.read(movieSearchProvider.notifier).search('batman');
 
       // when
       container.read(movieSearchProvider.notifier).clear();
 
       // then
-      final state = container.read(movieSearchProvider);
+      final MovieListState state = container.read(movieSearchProvider);
       expect(state.movies, isEmpty);
       expect(state.isLoading, isFalse);
       expect(state.hasError, isFalse);
-      verifyNever(() => mockUseCase.call(any()));
+      verifyNever(() => mockRepository.searchMovies(any()));
     });
   });
 }
@@ -112,7 +115,7 @@ Movie _tMovie() => const Movie(
   popularity: 100.0,
   voteAverage: 7.5,
   voteCount: 1000,
-  genreIds: [28],
+  genreIds: <int>[28],
   adult: false,
   video: false,
   originalLanguage: 'en',

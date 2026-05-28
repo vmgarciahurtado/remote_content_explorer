@@ -16,7 +16,7 @@ class MovieResponse {
   factory MovieResponse.fromJson(Map<String, dynamic> json) => MovieResponse(
     page: (json['page'] as num).toInt(),
     results: (json['results'] as List<dynamic>)
-        .map((e) => MovieModel.fromJson(e as Map<String, dynamic>))
+        .map((dynamic e) => MovieModel.fromJson(e as Map<String, dynamic>))
         .toList(),
     totalPages: (json['total_pages'] as num).toInt(),
     totalResults: (json['total_results'] as num).toInt(),

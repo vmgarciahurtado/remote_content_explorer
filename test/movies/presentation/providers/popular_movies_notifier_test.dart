@@ -1,98 +1,93 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/failure.dart';
-import 'package:remote_content_explorer/features/movies/di/movies_di.dart';
+import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
-import 'package:remote_content_explorer/features/movies/domain/usecases/get_popular_movies.dart';
-import 'package:remote_content_explorer/features/movies/presentation/providers/popular_movies_notifier.dart';
+import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/popular_movies_provider.dart';
+import 'package:riverpod/src/framework.dart';
 
-class MockGetPopularMovies extends Mock implements GetPopularMovies {}
+class MockMovieRepository extends Mock implements MovieRepository {}
 
 void main() {
-  late MockGetPopularMovies mockUseCase;
+  late MockMovieRepository mockRepository;
 
   setUp(() {
-    mockUseCase = MockGetPopularMovies();
+    mockRepository = MockMovieRepository();
   });
 
   ProviderContainer makeContainer() {
-    final container = ProviderContainer(
-      overrides: [getPopularMoviesProvider.overrideWith((_) => mockUseCase)],
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        movieRepositoryProvider.overrideWith((_) => mockRepository),
+      ],
     );
     addTearDown(container.dispose);
     return container;
   }
 
-  group('PopularMoviesNotifier', () {
-    test('given the use case returns movies '
-        'when the notifier is initialized '
+  group('popularMoviesProvider', () {
+    test('given the repository returns movies '
+        'when the provider is read '
         'then state contains the loaded movies', () async {
       // given
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => ([_tMovie(id: 1)], null));
+        () => mockRepository.getPopular(),
+      ).thenAnswer((_) async => (<Movie>[_tMovie(id: 1)], null));
 
       // when
-      final container = makeContainer();
-      container.listen(popularMoviesProvider, (_, _) {});
+      final ProviderContainer container = makeContainer();
+      container.read(popularMoviesProvider);
       await Future<void>.delayed(Duration.zero);
 
       // then
-      final state = container.read(popularMoviesProvider);
-      expect(state.movies.length, 1);
-      expect(state.isLoading, isFalse);
+      final AsyncValue<List<Movie>> state = container.read(
+        popularMoviesProvider,
+      );
+      expect(state.value?.length, 1);
       expect(state.hasError, isFalse);
     });
 
-    test('given the first page is loaded '
-        'when loadNextPage is called '
-        'then the second page is appended to the list', () async {
+    test('given the repository returns a failure '
+        'when the provider is read '
+        'then state has error', () async {
       // given
       when(
-        () => mockUseCase.call(page: 1),
-      ).thenAnswer((_) async => ([_tMovie(id: 1)], null));
-      when(
-        () => mockUseCase.call(page: 2),
-      ).thenAnswer((_) async => ([_tMovie(id: 2)], null));
-
-      final container = makeContainer();
-      container.listen(popularMoviesProvider, (_, _) {});
-      await Future<void>.delayed(Duration.zero);
-      expect(container.read(popularMoviesProvider).movies.length, 1);
+        () => mockRepository.getPopular(),
+      ).thenAnswer((_) async => (null, const NetworkFailure()));
 
       // when
-      await container.read(popularMoviesProvider.notifier).loadNextPage();
+      final ProviderContainer container = makeContainer();
+      container.read(popularMoviesProvider);
+      await Future<void>.delayed(Duration.zero);
 
       // then
-      final state = container.read(popularMoviesProvider);
-      expect(state.movies.length, 2);
-      expect(state.movies.map((m) => m.id), containsAll([1, 2]));
+      expect(container.read(popularMoviesProvider).hasError, isTrue);
     });
 
-    test('given the notifier is in an error state '
-        'when retry is called '
+    test('given the provider is in an error state '
+        'when invalidated '
         'then state is refreshed with movies', () async {
       // given — first call fails
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
+        () => mockRepository.getPopular(),
       ).thenAnswer((_) async => (null, const NetworkFailure()));
 
-      final container = makeContainer();
-      container.listen(popularMoviesProvider, (_, _) {});
+      final ProviderContainer container = makeContainer();
+      container.read(popularMoviesProvider);
       await Future<void>.delayed(Duration.zero);
       expect(container.read(popularMoviesProvider).hasError, isTrue);
 
       // when — retry succeeds
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => ([_tMovie(id: 1)], null));
-      await container.read(popularMoviesProvider.notifier).retry();
+        () => mockRepository.getPopular(),
+      ).thenAnswer((_) async => (<Movie>[_tMovie(id: 1)], null));
+      container.invalidate(popularMoviesProvider);
+      await container.read(popularMoviesProvider.future);
 
       // then
-      final state = container.read(popularMoviesProvider);
-      expect(state.movies.length, 1);
-      expect(state.hasError, isFalse);
+      expect(container.read(popularMoviesProvider).value?.length, 1);
+      expect(container.read(popularMoviesProvider).hasError, isFalse);
     });
   });
 }
@@ -108,7 +103,7 @@ Movie _tMovie({required int id}) => Movie(
   popularity: 100.0,
   voteAverage: 7.5,
   voteCount: 1000,
-  genreIds: const [28],
+  genreIds: const <int>[28],
   adult: false,
   video: false,
   originalLanguage: 'en',

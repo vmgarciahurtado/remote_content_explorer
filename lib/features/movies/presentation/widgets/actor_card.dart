@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 
 class ActorCard extends StatelessWidget {
-  const ActorCard({super.key, required this.actor});
+  const ActorCard({required this.actor, super.key});
 
   final Actor actor;
 
@@ -11,7 +11,7 @@ class ActorCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: Column(
-        children: [
+        children: <Widget>[
           ClipOval(
             child: SizedBox(
               width: 90,
@@ -20,7 +20,11 @@ class ActorCard extends StatelessWidget {
                   ? Image.network(
                       actor.profilePath!,
                       fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
+                      loadingBuilder: (
+                        BuildContext context,
+                        Widget child,
+                        ImageChunkEvent? loadingProgress,
+                      ) {
                         if (loadingProgress == null) return child;
                         return const ColoredBox(
                           color: Colors.black12,
@@ -29,11 +33,14 @@ class ActorCard extends StatelessWidget {
                           ),
                         );
                       },
-                      errorBuilder: (context, error, stackTrace) =>
-                          const ColoredBox(
-                            color: Colors.black12,
-                            child: Icon(Icons.person, size: 40),
-                          ),
+                      errorBuilder: (
+                        BuildContext context,
+                        Object error,
+                        StackTrace? stackTrace,
+                      ) => const ColoredBox(
+                        color: Colors.black12,
+                        child: Icon(Icons.person, size: 40),
+                      ),
                     )
                   : const ColoredBox(
                       color: Colors.black12,

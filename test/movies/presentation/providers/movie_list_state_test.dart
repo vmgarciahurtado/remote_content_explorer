@@ -1,68 +1,44 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
-import 'package:remote_content_explorer/features/movies/presentation/providers/movie_list_state.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/movie_list_provider.dart';
 
 void main() {
-  group('MovieListState.showInitialLoader', () {
-    test('given isLoading is true and movies list is empty '
-        'when showInitialLoader is checked '
-        'then returns true', () {
-      const state = MovieListState(isLoading: true);
-      expect(state.showInitialLoader, isTrue);
-    });
-
-    test('given isLoading is true but movies are already loaded '
-        'when showInitialLoader is checked '
-        'then returns false', () {
-      final state = MovieListState(isLoading: true, movies: [_tMovie()]);
-      expect(state.showInitialLoader, isFalse);
-    });
-  });
-
-  group('MovieListState.showInitialError', () {
-    test('given hasError is true and movies list is empty '
-        'when showInitialError is checked '
-        'then returns true', () {
-      const state = MovieListState(hasError: true);
-      expect(state.showInitialError, isTrue);
-    });
-
-    test('given hasError is true but movies are already loaded '
-        'when showInitialError is checked '
-        'then returns false', () {
-      final state = MovieListState(hasError: true, movies: [_tMovie()]);
-      expect(state.showInitialError, isFalse);
-    });
-  });
-
   group('MovieListState.copyWith', () {
-    test('given an existing state '
-        'when copyWith is called with new movies '
-        'then only movies are updated and error is reset', () {
+    test('given a state with isLoading and hasError '
+        'when copyWith updates only movies '
+        'then all other fields are preserved', () {
       // given
-      const original = MovieListState(isLoading: true, hasError: false);
+      const MovieListState original = MovieListState(
+        isLoading: true,
+        hasError: true,
+      );
 
       // when
-      final updated = original.copyWith(movies: [_tMovie()], isLoading: false);
+      final MovieListState updated = original.copyWith(
+        movies: <Movie>[_tMovie()],
+      );
 
       // then
       expect(updated.movies.length, 1);
-      expect(updated.isLoading, isFalse);
-      expect(updated.hasError, isFalse);
+      expect(updated.isLoading, isTrue);
+      expect(updated.hasError, isTrue);
     });
 
-    test('given a state with movies '
-        'when copyWith is called without arguments '
-        'then movies are preserved and hasError resets to false', () {
+    test('given a state with movies and hasError '
+        'when copyWith is called with no arguments '
+        'then all fields are preserved', () {
       // given
-      final original = MovieListState(movies: [_tMovie()]);
+      final MovieListState original = MovieListState(
+        movies: <Movie>[_tMovie()],
+        hasError: true,
+      );
 
       // when
-      final updated = original.copyWith();
+      final MovieListState updated = original.copyWith();
 
       // then
       expect(updated.movies.length, 1);
-      expect(updated.hasError, isFalse);
+      expect(updated.hasError, isTrue);
     });
   });
 }
@@ -78,7 +54,7 @@ Movie _tMovie() => const Movie(
   popularity: 100.0,
   voteAverage: 7.5,
   voteCount: 1000,
-  genreIds: [28],
+  genreIds: <int>[28],
   adult: false,
   video: false,
   originalLanguage: 'en',

@@ -1,8 +1,8 @@
-import 'package:remote_content_explorer/features/movies/infrastructure/models/movie_model.dart';
+import 'package:remote_content_explorer/core/constants/env.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/models/movie_model.dart';
 
-const _imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
-const _noImageUrl =
+const String _noImageUrl =
     'https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg';
 
 extension MovieModelMapper on MovieModel {
@@ -11,9 +11,12 @@ extension MovieModelMapper on MovieModel {
     title: title,
     originalTitle: originalTitle,
     overview: overview,
-    posterPath: posterPath.isNotEmpty ? '$_imageBaseUrl$posterPath' : _noImageUrl,
-    backdropPath:
-        backdropPath.isNotEmpty ? '$_imageBaseUrl$backdropPath' : _noImageUrl,
+    posterPath: posterPath.isNotEmpty
+        ? '${Env.imageBaseUrl}$posterPath'
+        : _noImageUrl,
+    backdropPath: backdropPath.isNotEmpty
+        ? '${Env.imageBaseUrl}$backdropPath'
+        : _noImageUrl,
     releaseDate: releaseDate,
     popularity: popularity,
     voteAverage: voteAverage,

@@ -92,8 +92,6 @@ linter:
     # === DOCUMENTATION ===
     # Public member API docs
     public_member_api_docs: false # Set to true for libraries
-    # Package API docs
-    package_api_docs: false # Set to true for packages
     
     # === FORMATTING ===
     # Curly braces in flow control structures

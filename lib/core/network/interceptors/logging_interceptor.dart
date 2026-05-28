@@ -21,19 +21,19 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
+  void onResponse(Response<dynamic> resp, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
       debugPrint('┌─────────────────────────────────────────────────');
       debugPrint('│ RESPONSE');
       debugPrint('├─────────────────────────────────────────────────');
       debugPrint(
-        '│ ${response.requestOptions.method} ${response.requestOptions.uri}',
+        '│ ${resp.requestOptions.method} ${resp.requestOptions.uri}',
       );
-      debugPrint('│ Status: ${response.statusCode}');
-      debugPrint('│ Data: ${response.data}');
+      debugPrint('│ Status: ${resp.statusCode}');
+      debugPrint('│ Data: ${resp.data}');
       debugPrint('└─────────────────────────────────────────────────');
     }
-    handler.next(response);
+    handler.next(resp);
   }
 
   @override

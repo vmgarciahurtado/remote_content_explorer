@@ -44,9 +44,9 @@ class MovieModel {
     voteCount: (json['vote_count'] as num).toInt(),
     genreIds:
         (json['genre_ids'] as List<dynamic>?)
-            ?.map((e) => (e as num).toInt())
+            ?.map((dynamic e) => (e as num).toInt())
             .toList() ??
-        [],
+        <int>[],
     adult: json['adult'] as bool? ?? false,
     video: json['video'] as bool? ?? false,
     originalLanguage: json['original_language'] as String? ?? '',

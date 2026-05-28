@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/mappers/actor_mapper.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/models/actor_model.dart';
 
@@ -8,7 +9,7 @@ void main() {
         'when toEntity is called '
         'then the profile URL is prefixed with the actor image base URL', () {
       // given
-      const model = ActorModel(
+      const ActorModel model = ActorModel(
         id: 1,
         name: 'John Doe',
         character: 'Hero',
@@ -16,7 +17,7 @@ void main() {
       );
 
       // when
-      final entity = model.toEntity();
+      final Actor entity = model.toEntity();
 
       // then
       expect(entity.profilePath, 'https://image.tmdb.org/t/p/w185/profile.jpg');
@@ -26,7 +27,7 @@ void main() {
         'when toEntity is called '
         'then profilePath is null in the entity', () {
       // given
-      const model = ActorModel(
+      const ActorModel model = ActorModel(
         id: 1,
         name: 'John Doe',
         character: 'Hero',
@@ -34,7 +35,7 @@ void main() {
       );
 
       // when
-      final entity = model.toEntity();
+      final Actor entity = model.toEntity();
 
       // then
       expect(entity.profilePath, isNull);

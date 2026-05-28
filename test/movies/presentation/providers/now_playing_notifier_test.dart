@@ -1,92 +1,91 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/failure.dart';
-import 'package:remote_content_explorer/features/movies/di/movies_di.dart';
+import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
-import 'package:remote_content_explorer/features/movies/domain/usecases/get_now_playing_movies.dart';
-import 'package:remote_content_explorer/features/movies/presentation/providers/now_playing_notifier.dart';
+import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/now_playing_provider.dart';
+import 'package:riverpod/src/framework.dart';
 
-class MockGetNowPlayingMovies extends Mock implements GetNowPlayingMovies {}
+class MockMovieRepository extends Mock implements MovieRepository {}
 
 void main() {
-  late MockGetNowPlayingMovies mockUseCase;
+  late MockMovieRepository mockRepository;
 
   setUp(() {
-    mockUseCase = MockGetNowPlayingMovies();
+    mockRepository = MockMovieRepository();
   });
 
   ProviderContainer makeContainer() {
-    final container = ProviderContainer(
-      overrides: [getNowPlayingMoviesProvider.overrideWith((_) => mockUseCase)],
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        movieRepositoryProvider.overrideWith((_) => mockRepository),
+      ],
     );
     addTearDown(container.dispose);
     return container;
   }
 
-  group('NowPlayingNotifier', () {
-    test('given the use case returns movies '
-        'when the notifier is initialized '
+  group('nowPlayingProvider', () {
+    test('given the repository returns movies '
+        'when the provider is read '
         'then state contains the loaded movies', () async {
       // given
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => ([_tMovie()], null));
+        () => mockRepository.getNowPlaying(),
+      ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
 
       // when
-      final container = makeContainer();
-      container.listen(nowPlayingProvider, (_, _) {});
+      final ProviderContainer container = makeContainer();
+      container.read(nowPlayingProvider);
       await Future<void>.delayed(Duration.zero);
 
       // then
-      final state = container.read(nowPlayingProvider);
-      expect(state.movies.length, 1);
-      expect(state.isLoading, isFalse);
+      final AsyncValue<List<Movie>> state = container.read(nowPlayingProvider);
+      expect(state.value?.length, 1);
       expect(state.hasError, isFalse);
     });
 
-    test('given the use case returns a failure '
-        'when the notifier is initialized '
-        'then state has error and no movies', () async {
+    test('given the repository returns a failure '
+        'when the provider is read '
+        'then state has error', () async {
       // given
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
+        () => mockRepository.getNowPlaying(),
       ).thenAnswer((_) async => (null, const NetworkFailure()));
 
       // when
-      final container = makeContainer();
-      container.listen(nowPlayingProvider, (_, _) {});
+      final ProviderContainer container = makeContainer();
+      container.read(nowPlayingProvider);
       await Future<void>.delayed(Duration.zero);
 
       // then
-      final state = container.read(nowPlayingProvider);
-      expect(state.hasError, isTrue);
-      expect(state.movies, isEmpty);
+      expect(container.read(nowPlayingProvider).hasError, isTrue);
     });
 
-    test('given the notifier is in an error state '
-        'when retry is called '
+    test('given the provider is in an error state '
+        'when invalidated '
         'then state is refreshed with movies', () async {
       // given — first call fails
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
+        () => mockRepository.getNowPlaying(),
       ).thenAnswer((_) async => (null, const NetworkFailure()));
 
-      final container = makeContainer();
-      container.listen(nowPlayingProvider, (_, _) {});
+      final ProviderContainer container = makeContainer();
+      container.read(nowPlayingProvider);
       await Future<void>.delayed(Duration.zero);
       expect(container.read(nowPlayingProvider).hasError, isTrue);
 
-      // when — second call succeeds
+      // when — retry succeeds
       when(
-        () => mockUseCase.call(page: any(named: 'page')),
-      ).thenAnswer((_) async => ([_tMovie()], null));
-      await container.read(nowPlayingProvider.notifier).retry();
+        () => mockRepository.getNowPlaying(),
+      ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+      container.invalidate(nowPlayingProvider);
+      await container.read(nowPlayingProvider.future);
 
       // then
-      final state = container.read(nowPlayingProvider);
-      expect(state.movies.length, 1);
-      expect(state.hasError, isFalse);
+      expect(container.read(nowPlayingProvider).value?.length, 1);
+      expect(container.read(nowPlayingProvider).hasError, isFalse);
     });
   });
 }
@@ -102,7 +101,7 @@ Movie _tMovie({int id = 1}) => Movie(
   popularity: 100.0,
   voteAverage: 7.5,
   voteCount: 1000,
-  genreIds: const [28],
+  genreIds: const <int>[28],
   adult: false,
   video: false,
   originalLanguage: 'en',

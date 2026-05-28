@@ -4,5 +4,5 @@ class AppAssets {
   static const String noWifi = 'assets/icons/no_wifi.png';
 
   /// Path to images
-  static const String notFoundImage = 'assets/images/noimage.png';
+  static const String notFoundImage = 'assets/images/no_image.png';
 }

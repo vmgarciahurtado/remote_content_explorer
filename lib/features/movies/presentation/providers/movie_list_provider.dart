@@ -2,7 +2,7 @@ import 'package:remote_content_explorer/features/movies/domain/entities/movie.da
 
 class MovieListState {
   const MovieListState({
-    this.movies = const [],
+    this.movies = const <Movie>[],
     this.isLoading = false,
     this.hasError = false,
   });
@@ -11,9 +11,6 @@ class MovieListState {
   final bool isLoading;
   final bool hasError;
 
-  bool get showInitialLoader => isLoading && movies.isEmpty;
-  bool get showInitialError => hasError && movies.isEmpty;
-
   MovieListState copyWith({
     List<Movie>? movies,
     bool? isLoading,
@@ -21,6 +18,6 @@ class MovieListState {
   }) => MovieListState(
     movies: movies ?? this.movies,
     isLoading: isLoading ?? this.isLoading,
-    hasError: hasError ?? false,
+    hasError: hasError ?? this.hasError,
   );
 }

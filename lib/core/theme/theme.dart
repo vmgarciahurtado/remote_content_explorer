@@ -14,10 +14,10 @@ class AppTheme {
 
   static ThemeData dark() => _build(
     brightness: Brightness.dark,
-    bg: Color(0xFF1A1A1A),
+    bg: const Color(0xFF1A1A1A),
     primary: Colors.white,
     secondary: Colors.white,
-    appBarBg: Color(0xFF121212),
+    appBarBg: const Color(0xFF121212),
     appBarFg: Colors.white,
   );
 
@@ -29,7 +29,7 @@ class AppTheme {
     required Color appBarBg,
     required Color appBarFg,
   }) {
-    final colorScheme = ColorScheme.fromSeed(
+    final ColorScheme colorScheme = ColorScheme.fromSeed(
       seedColor: primary,
       primary: primary,
       secondary: secondary,

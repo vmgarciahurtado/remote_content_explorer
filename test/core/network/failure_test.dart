@@ -1,5 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:remote_content_explorer/core/network/failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/not_found_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/server_error_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/unauthorized_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/unknown_failure.dart';
 
 void main() {
   group('Failure.userMessage', () {

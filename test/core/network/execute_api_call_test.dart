@@ -1,7 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:remote_content_explorer/core/network/error_handler/failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/not_found_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/server_error_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/unauthorized_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/unknown_failure.dart';
 import 'package:remote_content_explorer/core/network/execute_api_call.dart';
-import 'package:remote_content_explorer/core/network/failure.dart';
 
 void main() {
   group('executeApiCall', () {
@@ -14,7 +19,7 @@ void main() {
         Future<String> call() async => 'data';
 
         // when
-        final (value, failure) = await executeApiCall(call);
+        final (String? value, Failure? failure) = await executeApiCall(call);
 
         // then
         expect(failure, isNull);
@@ -31,7 +36,7 @@ void main() {
         Future<String> call() async => throw _dioException(401);
 
         // when
-        final (_, failure) = await executeApiCall(call);
+        final (_, Failure? failure) = await executeApiCall(call);
 
         // then
         expect(failure, isA<UnauthorizedFailure>());
@@ -47,7 +52,7 @@ void main() {
         Future<String> call() async => throw _dioException(404);
 
         // when
-        final (_, failure) = await executeApiCall(call);
+        final (_, Failure? failure) = await executeApiCall(call);
 
         // then
         expect(failure, isA<NotFoundFailure>());
@@ -63,7 +68,7 @@ void main() {
         Future<String> call() async => throw _dioException(500);
 
         // when
-        final (_, failure) = await executeApiCall(call);
+        final (_, Failure? failure) = await executeApiCall(call);
 
         // then
         expect(failure, isA<ServerErrorFailure>());
@@ -77,10 +82,10 @@ void main() {
       () async {
         // given
         Future<String> call() async =>
-            throw DioException(requestOptions: RequestOptions(path: ''));
+            throw DioException(requestOptions: RequestOptions());
 
         // when
-        final (_, failure) = await executeApiCall(call);
+        final (_, Failure? failure) = await executeApiCall(call);
 
         // then
         expect(failure, isA<NetworkFailure>());
@@ -96,7 +101,7 @@ void main() {
         Future<String> call() async => throw Exception('unexpected');
 
         // when
-        final (_, failure) = await executeApiCall(call);
+        final (_, Failure? failure) = await executeApiCall(call);
 
         // then
         expect(failure, isA<UnknownFailure>());
@@ -106,9 +111,9 @@ void main() {
 }
 
 DioException _dioException(int statusCode) => DioException(
-      requestOptions: RequestOptions(path: ''),
-      response: Response(
-        requestOptions: RequestOptions(path: ''),
-        statusCode: statusCode,
-      ),
-    );
+  requestOptions: RequestOptions(),
+  response: Response<dynamic>(
+    requestOptions: RequestOptions(),
+    statusCode: statusCode,
+  ),
+);

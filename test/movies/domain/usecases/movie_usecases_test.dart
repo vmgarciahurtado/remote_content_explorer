@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:remote_content_explorer/core/network/error_handler/failure.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
@@ -28,11 +29,11 @@ void main() {
         // given
         when(
           () => mockRepository.getNowPlaying(page: any(named: 'page')),
-        ).thenAnswer((_) async => ([_tMovie()], null));
-        final useCase = GetNowPlayingMovies(mockRepository);
+        ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+        final GetNowPlayingMovies useCase = GetNowPlayingMovies(mockRepository);
 
         // when
-        final result = await useCase.call(page: 2);
+        final (List<Movie>?, Failure?) result = await useCase.call(page: 2);
 
         // then
         expect(result.$2, isNull);
@@ -50,11 +51,11 @@ void main() {
         // given
         when(
           () => mockRepository.getPopular(page: any(named: 'page')),
-        ).thenAnswer((_) async => ([_tMovie()], null));
-        final useCase = GetPopularMovies(mockRepository);
+        ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+        final GetPopularMovies useCase = GetPopularMovies(mockRepository);
 
         // when
-        final result = await useCase.call(page: 3);
+        final (List<Movie>?, Failure?) result = await useCase.call(page: 3);
 
         // then
         expect(result.$2, isNull);
@@ -72,11 +73,11 @@ void main() {
         // given
         when(
           () => mockRepository.searchMovies(any()),
-        ).thenAnswer((_) async => ([_tMovie()], null));
-        final useCase = SearchMovies(mockRepository);
+        ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+        final SearchMovies useCase = SearchMovies(mockRepository);
 
         // when
-        final result = await useCase.call('batman');
+        final (List<Movie>?, Failure?) result = await useCase.call('batman');
 
         // then
         expect(result.$2, isNull);
@@ -92,11 +93,11 @@ void main() {
       // given
       when(
         () => mockRepository.getMovieCast(any()),
-      ).thenAnswer((_) async => ([_tActor()], null));
-      final useCase = GetMovieCast(mockRepository);
+      ).thenAnswer((_) async => (<Actor>[_tActor()], null));
+      final GetMovieCast useCase = GetMovieCast(mockRepository);
 
       // when
-      final result = await useCase.call(42);
+      final (List<Actor>?, Failure?) result = await useCase.call(42);
 
       // then
       expect(result.$2, isNull);
@@ -116,7 +117,7 @@ Movie _tMovie() => const Movie(
   popularity: 100.0,
   voteAverage: 7.5,
   voteCount: 1000,
-  genreIds: [28],
+  genreIds: <int>[28],
   adult: false,
   video: false,
   originalLanguage: 'en',
