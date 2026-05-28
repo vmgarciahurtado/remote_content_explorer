@@ -2,9 +2,6 @@ import 'package:remote_content_explorer/core/constants/env.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/models/movie_model.dart';
 
-const String _noImageUrl =
-    'https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg';
-
 extension MovieModelMapper on MovieModel {
   Movie toEntity() => Movie(
     id: id,
@@ -13,10 +10,10 @@ extension MovieModelMapper on MovieModel {
     overview: overview,
     posterPath: posterPath.isNotEmpty
         ? '${Env.imageBaseUrl}$posterPath'
-        : _noImageUrl,
+        : Env.noImageUrl,
     backdropPath: backdropPath.isNotEmpty
         ? '${Env.imageBaseUrl}$backdropPath'
-        : _noImageUrl,
+        : Env.noImageUrl,
     releaseDate: releaseDate,
     popularity: popularity,
     voteAverage: voteAverage,
