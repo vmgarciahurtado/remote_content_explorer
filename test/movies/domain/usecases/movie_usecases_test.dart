@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/error_handler/failure.dart';
+import 'package:remote_content_explorer/core/network/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
@@ -29,14 +29,14 @@ void main() {
         // given
         when(
           () => mockRepository.getNowPlaying(page: any(named: 'page')),
-        ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+        ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie()]));
         final GetNowPlayingMovies useCase = GetNowPlayingMovies(mockRepository);
 
         // when
-        final (List<Movie>?, Failure?) result = await useCase.call(page: 2);
+        final Result<List<Movie>> result = await useCase.call(page: 2);
 
         // then
-        expect(result.$2, isNull);
+        expect(result, isA<Success<List<Movie>>>());
         verify(() => mockRepository.getNowPlaying(page: 2)).called(1);
       },
     );
@@ -51,14 +51,14 @@ void main() {
         // given
         when(
           () => mockRepository.getPopular(page: any(named: 'page')),
-        ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+        ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie()]));
         final GetPopularMovies useCase = GetPopularMovies(mockRepository);
 
         // when
-        final (List<Movie>?, Failure?) result = await useCase.call(page: 3);
+        final Result<List<Movie>> result = await useCase.call(page: 3);
 
         // then
-        expect(result.$2, isNull);
+        expect(result, isA<Success<List<Movie>>>());
         verify(() => mockRepository.getPopular(page: 3)).called(1);
       },
     );
@@ -73,14 +73,14 @@ void main() {
         // given
         when(
           () => mockRepository.searchMovies(any()),
-        ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+        ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie()]));
         final SearchMovies useCase = SearchMovies(mockRepository);
 
         // when
-        final (List<Movie>?, Failure?) result = await useCase.call('batman');
+        final Result<List<Movie>> result = await useCase.call('batman');
 
         // then
-        expect(result.$2, isNull);
+        expect(result, isA<Success<List<Movie>>>());
         verify(() => mockRepository.searchMovies('batman')).called(1);
       },
     );
@@ -93,14 +93,14 @@ void main() {
       // given
       when(
         () => mockRepository.getMovieCast(any()),
-      ).thenAnswer((_) async => (<Actor>[_tActor()], null));
+      ).thenAnswer((_) async => Success<List<Actor>>(<Actor>[_tActor()]));
       final GetMovieCast useCase = GetMovieCast(mockRepository);
 
       // when
-      final (List<Actor>?, Failure?) result = await useCase.call(42);
+      final Result<List<Actor>> result = await useCase.call(42);
 
       // then
-      expect(result.$2, isNull);
+      expect(result, isA<Success<List<Actor>>>());
       verify(() => mockRepository.getMovieCast(42)).called(1);
     });
   });

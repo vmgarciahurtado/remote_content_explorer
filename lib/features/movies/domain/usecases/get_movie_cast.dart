@@ -1,4 +1,4 @@
-import 'package:remote_content_explorer/core/network/execute_api_call.dart';
+import 'package:remote_content_explorer/core/network/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
 
@@ -7,5 +7,6 @@ class GetMovieCast {
 
   final MovieRepository _repository;
 
-  Result<List<Actor>> call(int movieId) => _repository.getMovieCast(movieId);
+  Future<Result<List<Actor>>> call(int movieId) =>
+      _repository.getMovieCast(movieId);
 }

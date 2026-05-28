@@ -9,7 +9,8 @@ void main() {
 
   setUpAll(() {
     dotenv.loadFromString(
-      envString: 'API_KEY=test\n'
+      envString:
+          'API_KEY=test\n'
           'BASE_URL=https://api.test.com/\n'
           'IMAGE_BASE_URL=https://img.test.com/\n'
           'ACTOR_IMAGE_BASE_URL=https://actor.test.com/',

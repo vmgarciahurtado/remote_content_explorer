@@ -15,11 +15,12 @@ class DetailAppBar extends StatelessWidget {
         background: Image.network(
           movie.backdropPath,
           fit: BoxFit.cover,
-          errorBuilder: (
-            BuildContext context,
-            Object error,
-            StackTrace? stackTrace,
-          ) => const ColoredBox(color: Colors.black26),
+          errorBuilder:
+              (
+                BuildContext context,
+                Object error,
+                StackTrace? stackTrace,
+              ) => const ColoredBox(color: Colors.black26),
         ),
       ),
     );

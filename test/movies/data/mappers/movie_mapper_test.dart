@@ -5,6 +5,8 @@ import 'package:remote_content_explorer/features/movies/infrastructure/models/mo
 
 void main() {
   group('MovieModelMapper', () {
+    const String tImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
+
     test('given a model with a non-empty poster path '
         'when toEntity is called '
         'then the poster URL is prefixed with the image base URL', () {
@@ -12,7 +14,7 @@ void main() {
       final MovieModel model = _tMovieModel();
 
       // when
-      final Movie entity = model.toEntity();
+      final Movie entity = model.toEntity(imageBaseUrl: tImageBaseUrl);
 
       // then
       expect(entity.posterPath, 'https://image.tmdb.org/t/p/w500/poster.jpg');
@@ -25,7 +27,7 @@ void main() {
       final MovieModel model = _tMovieModel(posterPath: '');
 
       // when
-      final Movie entity = model.toEntity();
+      final Movie entity = model.toEntity(imageBaseUrl: tImageBaseUrl);
 
       // then
       expect(
@@ -41,7 +43,7 @@ void main() {
       final MovieModel model = _tMovieModel(backdropPath: '');
 
       // when
-      final Movie entity = model.toEntity();
+      final Movie entity = model.toEntity(imageBaseUrl: tImageBaseUrl);
 
       // then
       expect(

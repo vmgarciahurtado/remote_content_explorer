@@ -30,11 +30,13 @@ class _MovieHorizontalListState extends ConsumerState<MovieHorizontalList> {
           ref.read(popularMoviesProvider).value ?? <Movie>[];
       if (movies.isEmpty) return;
       final int next = ((_controller.page?.round() ?? 0) + 1) % movies.length;
-      unawaited(_controller.animateToPage(
-        next,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      ));
+      unawaited(
+        _controller.animateToPage(
+          next,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        ),
+      );
     });
   }
 

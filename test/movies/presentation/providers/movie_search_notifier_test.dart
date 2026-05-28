@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/failures.dart';
+import 'package:remote_content_explorer/core/network/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
-import 'package:remote_content_explorer/features/movies/presentation/providers/movie_list_provider.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/movie_search_provider.dart';
 import 'package:riverpod/src/framework.dart';
 
@@ -27,78 +27,90 @@ void main() {
     return container;
   }
 
-  group('MovieSearchNotifier', () {
-    test('given an empty query '
-        'when search is called '
-        'then state remains empty without triggering a fetch', () {
-      // given
-      final ProviderContainer container = makeContainer();
+  group('MovieSearchProvider and SearchQueryProvider', () {
+    test(
+      'given an empty query '
+      'when searchQueryProvider changes to empty '
+      'then movieSearchProvider remains empty without triggering a fetch',
+      () async {
+        // given
+        final ProviderContainer container = makeContainer();
 
-      // when
-      container.read(movieSearchProvider.notifier).search('  ');
+        // when
+        container.read(searchQueryProvider.notifier).setQuery('  ');
+        final List<Movie> value = await container.read(
+          movieSearchProvider.future,
+        );
 
-      // then
-      final MovieListState state = container.read(movieSearchProvider);
-      expect(state.movies, isEmpty);
-      expect(state.isLoading, isFalse);
-      verifyNever(() => mockRepository.searchMovies(any()));
-    });
+        // then
+        expect(value, isEmpty);
+        verifyNever(() => mockRepository.searchMovies(any()));
+      },
+    );
 
     test('given a valid query '
         'when the debounce fires '
-        'then state contains the search results', () async {
+        'then movieSearchProvider contains the search results', () async {
       // given
       when(
         () => mockRepository.searchMovies(any()),
-      ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+      ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie()]));
       final ProviderContainer container = makeContainer();
-      container.listen(movieSearchProvider, (_, _) {});
+
+      // We must listen to the provider to keep it active
+      container.listen(movieSearchProvider, (_, __) {});
 
       // when
-      container.read(movieSearchProvider.notifier).search('batman');
+      container.read(searchQueryProvider.notifier).setQuery('batman');
+
+      // Wait for debounce (400ms) and future completion
       await Future<void>.delayed(const Duration(milliseconds: 500));
 
       // then
-      final MovieListState state = container.read(movieSearchProvider);
-      expect(state.movies.length, 1);
+      final AsyncValue<List<Movie>> state = container.read(movieSearchProvider);
+      expect(state.value?.length, 1);
       expect(state.hasError, isFalse);
+      verify(() => mockRepository.searchMovies('batman')).called(1);
     });
 
     test('given a valid query '
         'when the use case returns a failure '
-        'then state has error', () async {
+        'then movieSearchProvider has error', () async {
       // given
       when(
         () => mockRepository.searchMovies(any()),
-      ).thenAnswer((_) async => (null, const NetworkFailure()));
+      ).thenAnswer(
+        (_) async => const FailureResult<List<Movie>>(NetworkFailure()),
+      );
       final ProviderContainer container = makeContainer();
-      container.listen(movieSearchProvider, (_, _) {});
+      container.listen(movieSearchProvider, (_, __) {});
 
       // when
-      container.read(movieSearchProvider.notifier).search('batman');
+      container.read(searchQueryProvider.notifier).setQuery('batman');
       await Future<void>.delayed(const Duration(milliseconds: 500));
 
       // then
-      final MovieListState state = container.read(movieSearchProvider);
+      final AsyncValue<List<Movie>> state = container.read(movieSearchProvider);
       expect(state.hasError, isTrue);
-      expect(state.movies, isEmpty);
+      expect(state.value, isNull);
     });
 
     test('given a pending search '
-        'when clear is called '
-        'then the debounce is cancelled and state resets', () {
+        'when query is cleared '
+        'then state resets and no fetch is triggered', () async {
       // given
       final ProviderContainer container = makeContainer();
-      container.read(movieSearchProvider.notifier).search('batman');
+      container.listen(movieSearchProvider, (_, __) {});
+      container.read(searchQueryProvider.notifier).setQuery('batman');
 
-      // when
-      container.read(movieSearchProvider.notifier).clear();
+      // when - clear query before debounce ends
+      container.read(searchQueryProvider.notifier).setQuery('');
+      final List<Movie> value = await container.read(
+        movieSearchProvider.future,
+      );
 
       // then
-      final MovieListState state = container.read(movieSearchProvider);
-      expect(state.movies, isEmpty);
-      expect(state.isLoading, isFalse);
-      expect(state.hasError, isFalse);
+      expect(value, isEmpty);
       verifyNever(() => mockRepository.searchMovies(any()));
     });
   });

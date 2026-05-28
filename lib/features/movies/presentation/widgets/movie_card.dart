@@ -40,25 +40,27 @@ class MovieCard extends StatelessWidget {
               child: Image.network(
                 movie.posterPath,
                 fit: BoxFit.cover,
-                loadingBuilder: (
-                  BuildContext context,
-                  Widget child,
-                  ImageChunkEvent? loadingProgress,
-                ) {
-                  if (loadingProgress == null) return child;
-                  return const ColoredBox(
-                    color: Colors.black12,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                },
-                errorBuilder: (
-                  BuildContext context,
-                  Object error,
-                  StackTrace? stackTrace,
-                ) => const ColoredBox(
-                  color: Colors.black12,
-                  child: Icon(Icons.broken_image, size: 64),
-                ),
+                loadingBuilder:
+                    (
+                      BuildContext context,
+                      Widget child,
+                      ImageChunkEvent? loadingProgress,
+                    ) {
+                      if (loadingProgress == null) return child;
+                      return const ColoredBox(
+                        color: Colors.black12,
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                errorBuilder:
+                    (
+                      BuildContext context,
+                      Object error,
+                      StackTrace? stackTrace,
+                    ) => const ColoredBox(
+                      color: Colors.black12,
+                      child: Icon(Icons.broken_image, size: 64),
+                    ),
               ),
             ),
           ),

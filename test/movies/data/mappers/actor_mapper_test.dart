@@ -5,6 +5,8 @@ import 'package:remote_content_explorer/features/movies/infrastructure/models/ac
 
 void main() {
   group('ActorModelMapper', () {
+    const String tActorImageBaseUrl = 'https://image.tmdb.org/t/p/w185';
+
     test('given an actor with a profile path '
         'when toEntity is called '
         'then the profile URL is prefixed with the actor image base URL', () {
@@ -17,7 +19,9 @@ void main() {
       );
 
       // when
-      final Actor entity = model.toEntity();
+      final Actor entity = model.toEntity(
+        actorImageBaseUrl: tActorImageBaseUrl,
+      );
 
       // then
       expect(entity.profilePath, 'https://image.tmdb.org/t/p/w185/profile.jpg');
@@ -35,7 +39,9 @@ void main() {
       );
 
       // when
-      final Actor entity = model.toEntity();
+      final Actor entity = model.toEntity(
+        actorImageBaseUrl: tActorImageBaseUrl,
+      );
 
       // then
       expect(entity.profilePath, isNull);

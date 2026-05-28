@@ -20,27 +20,31 @@ class ActorCard extends StatelessWidget {
                   ? Image.network(
                       actor.profilePath!,
                       fit: BoxFit.cover,
-                      loadingBuilder: (
-                        BuildContext context,
-                        Widget child,
-                        ImageChunkEvent? loadingProgress,
-                      ) {
-                        if (loadingProgress == null) return child;
-                        return const ColoredBox(
-                          color: Colors.black12,
-                          child: Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                      loadingBuilder:
+                          (
+                            BuildContext context,
+                            Widget child,
+                            ImageChunkEvent? loadingProgress,
+                          ) {
+                            if (loadingProgress == null) return child;
+                            return const ColoredBox(
+                              color: Colors.black12,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            );
+                          },
+                      errorBuilder:
+                          (
+                            BuildContext context,
+                            Object error,
+                            StackTrace? stackTrace,
+                          ) => const ColoredBox(
+                            color: Colors.black12,
+                            child: Icon(Icons.person, size: 40),
                           ),
-                        );
-                      },
-                      errorBuilder: (
-                        BuildContext context,
-                        Object error,
-                        StackTrace? stackTrace,
-                      ) => const ColoredBox(
-                        color: Colors.black12,
-                        child: Icon(Icons.person, size: 40),
-                      ),
                     )
                   : const ColoredBox(
                       color: Colors.black12,

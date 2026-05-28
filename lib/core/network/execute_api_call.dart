@@ -1,21 +1,16 @@
 import 'package:dio/dio.dart';
 
-import 'error_handler/failure.dart';
-import 'error_handler/network_failure.dart';
-import 'error_handler/not_found_failure.dart';
-import 'error_handler/server_error_failure.dart';
-import 'error_handler/unauthorized_failure.dart';
-import 'error_handler/unknown_failure.dart';
+import 'error_handler/failures.dart';
+import 'result.dart';
 
-typedef Result<T> = Future<(T?, Failure?)>;
-
-Result<T> executeApiCall<T>(Future<T> Function() call) async {
+Future<Result<T>> executeApiCall<T>(Future<T> Function() call) async {
   try {
-    return (await call(), null);
+    final T data = await call();
+    return Success<T>(data);
   } on DioException catch (e) {
-    return (null, _mapDioError(e));
+    return FailureResult<T>(_mapDioError(e));
   } catch (_) {
-    return (null, const UnknownFailure());
+    return FailureResult<T>(const UnknownFailure());
   }
 }
 

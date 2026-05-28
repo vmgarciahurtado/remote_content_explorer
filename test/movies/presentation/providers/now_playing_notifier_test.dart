@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/error_handler/network_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/failures.dart';
+import 'package:remote_content_explorer/core/network/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
@@ -33,7 +34,7 @@ void main() {
       // given
       when(
         () => mockRepository.getNowPlaying(),
-      ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+      ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie()]));
 
       // when
       final ProviderContainer container = makeContainer();
@@ -52,7 +53,9 @@ void main() {
       // given
       when(
         () => mockRepository.getNowPlaying(),
-      ).thenAnswer((_) async => (null, const NetworkFailure()));
+      ).thenAnswer(
+        (_) async => const FailureResult<List<Movie>>(NetworkFailure()),
+      );
 
       // when
       final ProviderContainer container = makeContainer();
@@ -69,7 +72,9 @@ void main() {
       // given — first call fails
       when(
         () => mockRepository.getNowPlaying(),
-      ).thenAnswer((_) async => (null, const NetworkFailure()));
+      ).thenAnswer(
+        (_) async => const FailureResult<List<Movie>>(NetworkFailure()),
+      );
 
       final ProviderContainer container = makeContainer();
       container.read(nowPlayingProvider);
@@ -79,7 +84,7 @@ void main() {
       // when — retry succeeds
       when(
         () => mockRepository.getNowPlaying(),
-      ).thenAnswer((_) async => (<Movie>[_tMovie()], null));
+      ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie()]));
       container.invalidate(nowPlayingProvider);
       await container.read(nowPlayingProvider.future);
 

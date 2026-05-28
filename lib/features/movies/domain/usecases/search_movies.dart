@@ -1,4 +1,4 @@
-import 'package:remote_content_explorer/core/network/execute_api_call.dart';
+import 'package:remote_content_explorer/core/network/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
 
@@ -7,5 +7,6 @@ class SearchMovies {
 
   final MovieRepository _repository;
 
-  Result<List<Movie>> call(String query) => _repository.searchMovies(query);
+  Future<Result<List<Movie>>> call(String query) =>
+      _repository.searchMovies(query);
 }

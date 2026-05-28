@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/error_handler/failure.dart';
-import 'package:remote_content_explorer/core/network/error_handler/unauthorized_failure.dart';
+import 'package:remote_content_explorer/core/network/error_handler/failures.dart';
+import 'package:remote_content_explorer/core/network/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/datasources/movie_remote_datasource.dart';
@@ -18,9 +18,16 @@ void main() {
   late MockMovieRemoteDatasource mockDatasource;
   late MovieRepositoryImpl repository;
 
+  const String tImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
+  const String tActorImageBaseUrl = 'https://image.tmdb.org/t/p/w185';
+
   setUp(() {
     mockDatasource = MockMovieRemoteDatasource();
-    repository = MovieRepositoryImpl(mockDatasource);
+    repository = MovieRepositoryImpl(
+      mockDatasource,
+      imageBaseUrl: tImageBaseUrl,
+      actorImageBaseUrl: tActorImageBaseUrl,
+    );
   });
 
   group('MovieRepositoryImpl', () {
@@ -33,12 +40,12 @@ void main() {
       ).thenAnswer((_) async => _tMovieResponse());
 
       // when
-      final (List<Movie>? movies, Failure? failure) = await repository
-          .getNowPlaying();
+      final Result<List<Movie>> result = await repository.getNowPlaying();
 
       // then
-      expect(failure, isNull);
-      expect(movies!.length, 1);
+      expect(result, isA<Success<List<Movie>>>());
+      final List<Movie> movies = (result as Success<List<Movie>>).data;
+      expect(movies.length, 1);
       expect(movies.first.id, 1);
       expect(
         movies.first.posterPath,
@@ -63,9 +70,11 @@ void main() {
       );
 
       // when
-      final (_, Failure? failure) = await repository.getNowPlaying();
+      final Result<List<Movie>> result = await repository.getNowPlaying();
 
       // then
+      expect(result, isA<FailureResult<List<Movie>>>());
+      final Failure failure = (result as FailureResult<List<Movie>>).failure;
       expect(failure, isA<UnauthorizedFailure>());
     });
 
@@ -78,12 +87,12 @@ void main() {
       ).thenAnswer((_) async => _tMovieResponse());
 
       // when
-      final (List<Movie>? movies, Failure? failure) = await repository
-          .getPopular();
+      final Result<List<Movie>> result = await repository.getPopular();
 
       // then
-      expect(failure, isNull);
-      expect(movies!.first.id, 1);
+      expect(result, isA<Success<List<Movie>>>());
+      final List<Movie> movies = (result as Success<List<Movie>>).data;
+      expect(movies.first.id, 1);
     });
 
     test('given the datasource returns a movie response '
@@ -95,12 +104,14 @@ void main() {
       ).thenAnswer((_) async => _tMovieResponse());
 
       // when
-      final (List<Movie>? movies, Failure? failure) = await repository
-          .searchMovies('batman');
+      final Result<List<Movie>> result = await repository.searchMovies(
+        'batman',
+      );
 
       // then
-      expect(failure, isNull);
-      expect(movies!.first.title, 'Test Movie');
+      expect(result, isA<Success<List<Movie>>>());
+      final List<Movie> movies = (result as Success<List<Movie>>).data;
+      expect(movies.first.title, 'Test Movie');
     });
 
     test('given the datasource returns a cast response '
@@ -112,12 +123,12 @@ void main() {
       ).thenAnswer((_) async => _tCastResponse());
 
       // when
-      final (List<Actor>? actors, Failure? failure) = await repository
-          .getMovieCast(1);
+      final Result<List<Actor>> result = await repository.getMovieCast(1);
 
       // then
-      expect(failure, isNull);
-      expect(actors!.length, 1);
+      expect(result, isA<Success<List<Actor>>>());
+      final List<Actor> actors = (result as Success<List<Actor>>).data;
+      expect(actors.length, 1);
       expect(actors.first.name, 'John Doe');
       expect(
         actors.first.profilePath,
