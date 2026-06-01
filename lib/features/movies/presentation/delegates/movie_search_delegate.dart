@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/core/constants/routes.dart';
+import 'package:remote_content_explorer/core/errors/failures.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/movie_search_provider.dart';
 
@@ -77,9 +78,9 @@ class MovieSearchDelegate extends SearchDelegate<void> {
 
         return state.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (Object _, StackTrace __) => Center(
+          error: (Object error, StackTrace __) => Center(
             child: Text(
-              'Error al buscar. Verifica tu conexión.',
+              error is Failure ? error.userMessage : 'Error al buscar',
               style: TextStyle(
                 fontSize: 13,
                 color: Theme.of(context).colorScheme.outline,

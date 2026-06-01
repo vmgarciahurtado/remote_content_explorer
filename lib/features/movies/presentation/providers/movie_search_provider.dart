@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:remote_content_explorer/core/network/error_handler/failures.dart';
-import 'package:remote_content_explorer/core/network/result.dart';
+import 'package:remote_content_explorer/core/errors/failures.dart';
+import 'package:remote_content_explorer/core/helpers/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/usecases/search_movies.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/usecase_providers.dart';

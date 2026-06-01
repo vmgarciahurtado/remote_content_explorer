@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/error_handler/failures.dart';
-import 'package:remote_content_explorer/core/network/result.dart';
+import 'package:remote_content_explorer/core/errors/failures.dart';
+import 'package:remote_content_explorer/core/helpers/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
-import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/infrastructure_providers.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/popular_movies_provider.dart';
 import 'package:riverpod/src/framework.dart';
 
@@ -28,72 +28,76 @@ void main() {
   }
 
   group('popularMoviesProvider', () {
-    test('given the repository returns movies '
-        'when the provider is read '
-        'then state contains the loaded movies', () async {
-      // given
-      when(
-        () => mockRepository.getPopular(),
-      ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie(id: 1)]));
+    test(
+      'given the repository returns movies '
+      'when the provider is read '
+      'then state contains the loaded movies',
+      () async {
+        when(
+          () => mockRepository.getPopular(),
+        ).thenAnswer(
+          (_) async => Success<List<Movie>>(<Movie>[_tMovie(id: 1)]),
+        );
 
-      // when
-      final ProviderContainer container = makeContainer();
-      container.read(popularMoviesProvider);
-      await Future<void>.delayed(Duration.zero);
+        final ProviderContainer container = makeContainer();
+        container.read(popularMoviesProvider);
+        await Future<void>.delayed(Duration.zero);
 
-      // then
-      final AsyncValue<List<Movie>> state = container.read(
-        popularMoviesProvider,
-      );
-      expect(state.value?.length, 1);
-      expect(state.hasError, isFalse);
-    });
+        final AsyncValue<List<Movie>> state = container.read(
+          popularMoviesProvider,
+        );
+        expect(state.value?.length, 1);
+        expect(state.hasError, isFalse);
+      },
+    );
 
-    test('given the repository returns a failure '
-        'when the provider is read '
-        'then state has error', () async {
-      // given
-      when(
-        () => mockRepository.getPopular(),
-      ).thenAnswer(
-        (_) async => const FailureResult<List<Movie>>(NetworkFailure()),
-      );
+    test(
+      'given the repository returns a failure '
+      'when the provider is read '
+      'then state has error',
+      () async {
+        when(
+          () => mockRepository.getPopular(),
+        ).thenAnswer(
+          (_) async => const FailureResult<List<Movie>>(ConnectionFailure()),
+        );
 
-      // when
-      final ProviderContainer container = makeContainer();
-      container.read(popularMoviesProvider);
-      await Future<void>.delayed(Duration.zero);
+        final ProviderContainer container = makeContainer();
+        container.read(popularMoviesProvider);
+        await Future<void>.delayed(Duration.zero);
 
-      // then
-      expect(container.read(popularMoviesProvider).hasError, isTrue);
-    });
+        expect(container.read(popularMoviesProvider).hasError, isTrue);
+      },
+    );
 
-    test('given the provider is in an error state '
-        'when invalidated '
-        'then state is refreshed with movies', () async {
-      // given — first call fails
-      when(
-        () => mockRepository.getPopular(),
-      ).thenAnswer(
-        (_) async => const FailureResult<List<Movie>>(NetworkFailure()),
-      );
+    test(
+      'given the provider is in an error state '
+      'when invalidated '
+      'then state is refreshed with movies',
+      () async {
+        when(
+          () => mockRepository.getPopular(),
+        ).thenAnswer(
+          (_) async => const FailureResult<List<Movie>>(ConnectionFailure()),
+        );
 
-      final ProviderContainer container = makeContainer();
-      container.read(popularMoviesProvider);
-      await Future<void>.delayed(Duration.zero);
-      expect(container.read(popularMoviesProvider).hasError, isTrue);
+        final ProviderContainer container = makeContainer();
+        container.read(popularMoviesProvider);
+        await Future<void>.delayed(Duration.zero);
+        expect(container.read(popularMoviesProvider).hasError, isTrue);
 
-      // when — retry succeeds
-      when(
-        () => mockRepository.getPopular(),
-      ).thenAnswer((_) async => Success<List<Movie>>(<Movie>[_tMovie(id: 1)]));
-      container.invalidate(popularMoviesProvider);
-      await container.read(popularMoviesProvider.future);
+        when(
+          () => mockRepository.getPopular(),
+        ).thenAnswer(
+          (_) async => Success<List<Movie>>(<Movie>[_tMovie(id: 1)]),
+        );
+        container.invalidate(popularMoviesProvider);
+        await container.read(popularMoviesProvider.future);
 
-      // then
-      expect(container.read(popularMoviesProvider).value?.length, 1);
-      expect(container.read(popularMoviesProvider).hasError, isFalse);
-    });
+        expect(container.read(popularMoviesProvider).value?.length, 1);
+        expect(container.read(popularMoviesProvider).hasError, isFalse);
+      },
+    );
   });
 }
 

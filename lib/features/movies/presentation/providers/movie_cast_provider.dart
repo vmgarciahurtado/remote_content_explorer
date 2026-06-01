@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
-import 'package:remote_content_explorer/core/network/error_handler/failures.dart';
-import 'package:remote_content_explorer/core/network/result.dart';
+import 'package:remote_content_explorer/core/errors/failures.dart';
+import 'package:remote_content_explorer/core/helpers/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/domain/usecases/get_movie_cast.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/usecase_providers.dart';

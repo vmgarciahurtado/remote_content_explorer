@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/core/constants/env.dart';
-
-import 'interceptors/logging_interceptor.dart';
+import 'package:remote_content_explorer/core/services/http/dio/interceptors/logging_interceptor.dart';
 
 final Provider<Dio> dioProvider = Provider<Dio>((Ref ref) {
   final Dio dio = Dio();

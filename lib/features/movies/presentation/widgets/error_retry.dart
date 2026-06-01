@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 
 class ErrorRetry extends StatelessWidget {
-  const ErrorRetry({required this.onRetry, this.compact = false, super.key});
+  const ErrorRetry({
+    required this.onRetry,
+    this.message,
+    this.compact = false,
+    super.key,
+  });
 
   final VoidCallback onRetry;
+  final String? message;
   final bool compact;
 
   @override
@@ -18,7 +24,7 @@ class ErrorRetry extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            'Error al cargar',
+            message ?? 'Error al cargar',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.outline,
             ),
@@ -47,7 +53,7 @@ class ErrorRetry extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'No se pudo cargar el contenido',
+            message ?? 'No se pudo cargar el contenido',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.outline,
             ),

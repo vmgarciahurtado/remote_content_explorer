@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:remote_content_explorer/core/network/interceptors/logging_interceptor.dart';
+import 'package:remote_content_explorer/core/services/http/dio/interceptors/logging_interceptor.dart';
 
 class MockRequestInterceptorHandler extends Mock
     implements RequestInterceptorHandler {}
@@ -25,7 +25,6 @@ void main() {
       'when onRequest is called '
       'then the request is forwarded via handler.next',
       () {
-        // given
         final RequestOptions options = RequestOptions(
           path: '/test',
           method: 'GET',
@@ -33,10 +32,8 @@ void main() {
         final MockRequestInterceptorHandler handler =
             MockRequestInterceptorHandler();
 
-        // when
         interceptor.onRequest(options, handler);
 
-        // then
         verify(() => handler.next(options)).called(1);
       },
     );
@@ -46,7 +43,6 @@ void main() {
       'when onRequest is called '
       'then the body is logged and the request is forwarded',
       () {
-        // given
         final RequestOptions options = RequestOptions(
           path: '/test',
           method: 'POST',
@@ -55,10 +51,8 @@ void main() {
         final MockRequestInterceptorHandler handler =
             MockRequestInterceptorHandler();
 
-        // when
         interceptor.onRequest(options, handler);
 
-        // then
         verify(() => handler.next(options)).called(1);
       },
     );
@@ -68,7 +62,6 @@ void main() {
       'when onResponse is called '
       'then the response is forwarded via handler.next',
       () {
-        // given
         final RequestOptions options = RequestOptions(path: '/test');
         final Response<dynamic> response = Response<dynamic>(
           requestOptions: options,
@@ -78,10 +71,8 @@ void main() {
         final MockResponseInterceptorHandler handler =
             MockResponseInterceptorHandler();
 
-        // when
         interceptor.onResponse(response, handler);
 
-        // then
         verify(() => handler.next(response)).called(1);
       },
     );
@@ -91,7 +82,6 @@ void main() {
       'when onError is called '
       'then the error is forwarded via handler.next',
       () {
-        // given
         final RequestOptions options = RequestOptions(path: '/test');
         final DioException error = DioException(
           requestOptions: options,
@@ -103,10 +93,8 @@ void main() {
         final MockErrorInterceptorHandler handler =
             MockErrorInterceptorHandler();
 
-        // when
         interceptor.onError(error, handler);
 
-        // then
         verify(() => handler.next(error)).called(1);
       },
     );
@@ -116,7 +104,6 @@ void main() {
       'when onError is called '
       'then the error data is logged and the error is forwarded',
       () {
-        // given
         final RequestOptions options = RequestOptions(path: '/test');
         final DioException error = DioException(
           requestOptions: options,
@@ -129,10 +116,8 @@ void main() {
         final MockErrorInterceptorHandler handler =
             MockErrorInterceptorHandler();
 
-        // when
         interceptor.onError(error, handler);
 
-        // then
         verify(() => handler.next(error)).called(1);
       },
     );

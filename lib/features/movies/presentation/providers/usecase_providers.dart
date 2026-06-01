@@ -3,7 +3,7 @@ import 'package:remote_content_explorer/features/movies/domain/usecases/get_movi
 import 'package:remote_content_explorer/features/movies/domain/usecases/get_now_playing_movies.dart';
 import 'package:remote_content_explorer/features/movies/domain/usecases/get_popular_movies.dart';
 import 'package:remote_content_explorer/features/movies/domain/usecases/search_movies.dart';
-import 'package:remote_content_explorer/features/movies/infrastructure/repositories/movie_repository_impl.dart';
+import 'package:remote_content_explorer/features/movies/presentation/providers/infrastructure_providers.dart';
 
 final Provider<GetNowPlayingMovies> getNowPlayingMoviesProvider =
     Provider<GetNowPlayingMovies>((Ref ref) {
