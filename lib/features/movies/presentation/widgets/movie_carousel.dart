@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:remote_content_explorer/core/errors/failures.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/now_playing_provider.dart';
 import 'package:remote_content_explorer/features/movies/presentation/widgets/carousel_shell.dart';
@@ -36,8 +37,9 @@ class _MovieCarouselState extends ConsumerState<MovieCarousel> {
       loading: () => const CarouselShell(
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (Object _, StackTrace __) => CarouselShell(
+      error: (Object error, StackTrace __) => CarouselShell(
         child: ErrorRetry(
+          message: error is Failure ? error.userMessage : null,
           onRetry: () => ref.invalidate(nowPlayingProvider),
         ),
       ),

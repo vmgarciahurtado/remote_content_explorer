@@ -11,36 +11,38 @@ class CastSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(movieCastProvider(movieId)).when(
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(child: CircularProgressIndicator()),
-      ),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (List<Actor> cast) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Reparto',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+    return ref
+        .watch(movieCastProvider(movieId))
+        .when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: Center(child: CircularProgressIndicator()),
           ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 165,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: cast.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  ActorCard(actor: cast[index]),
-            ),
+          error: (_, __) => const SizedBox.shrink(),
+          data: (List<Actor> cast) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Reparto',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 165,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  itemCount: cast.length,
+                  itemBuilder: (BuildContext context, int index) =>
+                      ActorCard(actor: cast[index]),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
   }
 }

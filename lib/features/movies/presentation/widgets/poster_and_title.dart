@@ -21,17 +21,18 @@ class PosterAndTitle extends StatelessWidget {
                 movie.posterPath,
                 width: 110,
                 fit: BoxFit.cover,
-                errorBuilder: (
-                  BuildContext context,
-                  Object error,
-                  StackTrace? stackTrace,
-                ) => const SizedBox(
-                  width: 110,
-                  child: ColoredBox(
-                    color: Colors.black12,
-                    child: Icon(Icons.movie, size: 48),
-                  ),
-                ),
+                errorBuilder:
+                    (
+                      BuildContext context,
+                      Object error,
+                      StackTrace? stackTrace,
+                    ) => const SizedBox(
+                      width: 110,
+                      child: ColoredBox(
+                        color: Colors.black12,
+                        child: Icon(Icons.movie, size: 48),
+                      ),
+                    ),
               ),
             ),
           ),

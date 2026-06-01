@@ -1,44 +1,53 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
-import 'package:remote_content_explorer/features/movies/infrastructure/mappers/actor_mapper.dart';
-import 'package:remote_content_explorer/features/movies/infrastructure/models/actor_model.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/remote/mappers/remote_actor_mapper.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/remote/models/remote_actor_model.dart';
 
 void main() {
-  group('ActorModelMapper', () {
-    test('given an actor with a profile path '
-        'when toEntity is called '
-        'then the profile URL is prefixed with the actor image base URL', () {
-      // given
-      const ActorModel model = ActorModel(
-        id: 1,
-        name: 'John Doe',
-        character: 'Hero',
-        profilePath: '/profile.jpg',
-      );
+  group('RemoteActorMapper.toEntity', () {
+    const String tActorImageBaseUrl = 'https://image.tmdb.org/t/p/w185';
 
-      // when
-      final Actor entity = model.toEntity();
+    test(
+      'given an actor with a profile path when toEntity is called '
+      'then the profile URL is prefixed with the actor image base URL',
+      () {
+        const RemoteActorModel model = RemoteActorModel(
+          id: 1,
+          name: 'John Doe',
+          character: 'Hero',
+          profilePath: '/profile.jpg',
+        );
 
-      // then
-      expect(entity.profilePath, 'https://image.tmdb.org/t/p/w185/profile.jpg');
-    });
+        final Actor entity = RemoteActorMapper.toEntity(
+          model,
+          actorImageBaseUrl: tActorImageBaseUrl,
+        );
 
-    test('given an actor without a profile path '
-        'when toEntity is called '
-        'then profilePath is null in the entity', () {
-      // given
-      const ActorModel model = ActorModel(
-        id: 1,
-        name: 'John Doe',
-        character: 'Hero',
-        profilePath: null,
-      );
+        expect(
+          entity.profilePath,
+          'https://image.tmdb.org/t/p/w185/profile.jpg',
+        );
+      },
+    );
 
-      // when
-      final Actor entity = model.toEntity();
+    test(
+      'given an actor without a profile path when toEntity is called '
+      'then profilePath is null in the entity',
+      () {
+        const RemoteActorModel model = RemoteActorModel(
+          id: 1,
+          name: 'John Doe',
+          character: 'Hero',
+          profilePath: null,
+        );
 
-      // then
-      expect(entity.profilePath, isNull);
-    });
+        final Actor entity = RemoteActorMapper.toEntity(
+          model,
+          actorImageBaseUrl: tActorImageBaseUrl,
+        );
+
+        expect(entity.profilePath, isNull);
+      },
+    );
   });
 }

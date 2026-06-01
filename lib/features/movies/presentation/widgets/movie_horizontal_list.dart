@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:remote_content_explorer/core/errors/failures.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/popular_movies_provider.dart';
 import 'package:remote_content_explorer/features/movies/presentation/widgets/error_retry.dart';
@@ -30,11 +31,13 @@ class _MovieHorizontalListState extends ConsumerState<MovieHorizontalList> {
           ref.read(popularMoviesProvider).value ?? <Movie>[];
       if (movies.isEmpty) return;
       final int next = ((_controller.page?.round() ?? 0) + 1) % movies.length;
-      unawaited(_controller.animateToPage(
-        next,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      ));
+      unawaited(
+        _controller.animateToPage(
+          next,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        ),
+      );
     });
   }
 
@@ -57,9 +60,11 @@ class _MovieHorizontalListState extends ConsumerState<MovieHorizontalList> {
     }
 
     if (state.hasError && movies.isEmpty) {
+      final Object? error = state.error;
       return ListShell(
         child: ErrorRetry(
           compact: true,
+          message: error is Failure ? error.userMessage : null,
           onRetry: () => ref.invalidate(popularMoviesProvider),
         ),
       );
