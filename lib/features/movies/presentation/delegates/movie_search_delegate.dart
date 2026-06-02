@@ -6,6 +6,7 @@ import 'package:remote_content_explorer/core/constants/routes.dart';
 import 'package:remote_content_explorer/core/errors/failures.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/movie_search_provider.dart';
+import 'package:remote_content_explorer/features/movies/presentation/widgets/network_image_with_fallback.dart';
 
 class MovieSearchDelegate extends SearchDelegate<void> {
   @override
@@ -122,23 +123,17 @@ class MovieSearchDelegate extends SearchDelegate<void> {
                   ),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      movie.posterPath,
+                    child: NetworkImageWithFallback(
+                      url: movie.posterPath,
                       width: 44,
                       height: 64,
-                      fit: BoxFit.cover,
-                      errorBuilder:
-                          (
-                            BuildContext context,
-                            Object error,
-                            StackTrace? stackTrace,
-                          ) => const SizedBox(
-                            width: 44,
-                            child: ColoredBox(
-                              color: Colors.black12,
-                              child: Icon(Icons.movie, size: 24),
-                            ),
-                          ),
+                      fallback: const SizedBox(
+                        width: 44,
+                        child: ColoredBox(
+                          color: Colors.black12,
+                          child: Icon(Icons.movie, size: 24),
+                        ),
+                      ),
                     ),
                   ),
                   title: Text(

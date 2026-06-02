@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:remote_content_explorer/core/errors/failures.dart';
@@ -6,7 +8,6 @@ import 'package:remote_content_explorer/features/movies/domain/entities/movie.da
 import 'package:remote_content_explorer/features/movies/domain/repositories/movie_repository.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/infrastructure_providers.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/movie_search_provider.dart';
-import 'package:riverpod/src/framework.dart';
 
 class MockMovieRepository extends Mock implements MovieRepository {}
 

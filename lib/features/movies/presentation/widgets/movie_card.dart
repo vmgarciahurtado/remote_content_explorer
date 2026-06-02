@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:remote_content_explorer/core/constants/routes.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
+import 'package:remote_content_explorer/features/movies/presentation/widgets/network_image_with_fallback.dart';
 
 class MovieCard extends StatelessWidget {
   const MovieCard({
@@ -28,7 +30,7 @@ class MovieCard extends StatelessWidget {
       child: GestureDetector(
         onTap: () => Navigator.pushNamed(
           context,
-          '/movie-detail',
+          AppRoutes.movieDetail,
           arguments: movie,
         ),
         child: Padding(
@@ -37,30 +39,13 @@ class MovieCard extends StatelessWidget {
             tag: 'movie-poster-${movie.id}',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(
-                movie.posterPath,
-                fit: BoxFit.cover,
-                loadingBuilder:
-                    (
-                      BuildContext context,
-                      Widget child,
-                      ImageChunkEvent? loadingProgress,
-                    ) {
-                      if (loadingProgress == null) return child;
-                      return const ColoredBox(
-                        color: Colors.black12,
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    },
-                errorBuilder:
-                    (
-                      BuildContext context,
-                      Object error,
-                      StackTrace? stackTrace,
-                    ) => const ColoredBox(
-                      color: Colors.black12,
-                      child: Icon(Icons.broken_image, size: 64),
-                    ),
+              child: NetworkImageWithFallback(
+                url: movie.posterPath,
+                showLoader: true,
+                fallback: const ColoredBox(
+                  color: Colors.black12,
+                  child: Icon(Icons.broken_image, size: 64),
+                ),
               ),
             ),
           ),

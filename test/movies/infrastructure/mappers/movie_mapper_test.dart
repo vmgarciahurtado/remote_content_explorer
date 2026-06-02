@@ -2,11 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/mappers/remote_movie_mapper.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/models/remote_movie_model.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/remote/services/image_url_resolver.dart';
 
 void main() {
   group('RemoteMovieMapper.toEntity', () {
     const String tImageBaseUrl = 'https://image.tmdb.org/t/p/w500';
     const String tNoImageUrl = 'https://image.tmdb.org/t/p/w500/fallback.jpg';
+    const ImageUrlResolver tResolver = ImageUrlResolver(
+      imageBaseUrl: tImageBaseUrl,
+      actorImageBaseUrl: '',
+      noImageUrl: tNoImageUrl,
+    );
 
     test(
       'given a model with a non-empty poster path when toEntity is called '
@@ -14,11 +20,7 @@ void main() {
       () {
         final RemoteMovieModel model = _tMovieModel();
 
-        final Movie entity = RemoteMovieMapper.toEntity(
-          model,
-          imageBaseUrl: tImageBaseUrl,
-          noImageUrl: tNoImageUrl,
-        );
+        final Movie entity = RemoteMovieMapper.toEntity(model, tResolver);
 
         expect(entity.posterPath, 'https://image.tmdb.org/t/p/w500/poster.jpg');
       },
@@ -30,11 +32,7 @@ void main() {
       () {
         final RemoteMovieModel model = _tMovieModel(posterPath: '');
 
-        final Movie entity = RemoteMovieMapper.toEntity(
-          model,
-          imageBaseUrl: tImageBaseUrl,
-          noImageUrl: tNoImageUrl,
-        );
+        final Movie entity = RemoteMovieMapper.toEntity(model, tResolver);
 
         expect(entity.posterPath, tNoImageUrl);
       },
@@ -46,11 +44,7 @@ void main() {
       () {
         final RemoteMovieModel model = _tMovieModel(backdropPath: '');
 
-        final Movie entity = RemoteMovieMapper.toEntity(
-          model,
-          imageBaseUrl: tImageBaseUrl,
-          noImageUrl: tNoImageUrl,
-        );
+        final Movie entity = RemoteMovieMapper.toEntity(model, tResolver);
 
         expect(entity.backdropPath, tNoImageUrl);
       },

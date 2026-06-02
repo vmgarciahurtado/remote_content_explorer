@@ -7,6 +7,7 @@ import 'package:remote_content_explorer/core/services/http/http_service.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/repositories/remote_movie_repository_impl.dart';
+import 'package:remote_content_explorer/features/movies/infrastructure/remote/services/image_url_resolver.dart';
 
 class MockHttpService extends Mock implements HttpService {}
 
@@ -22,9 +23,11 @@ void main() {
     mockHttpService = MockHttpService();
     repository = RemoteMovieRepositoryImpl(
       mockHttpService,
-      imageBaseUrl: tImageBaseUrl,
-      noImageUrl: tNoImageUrl,
-      actorImageBaseUrl: tActorImageBaseUrl,
+      const ImageUrlResolver(
+        imageBaseUrl: tImageBaseUrl,
+        actorImageBaseUrl: tActorImageBaseUrl,
+        noImageUrl: tNoImageUrl,
+      ),
     );
   });
 

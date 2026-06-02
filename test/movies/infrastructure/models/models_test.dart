@@ -1,13 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:remote_content_explorer/features/movies/infrastructure/remote/mappers/remote_actor_mapper.dart';
-import 'package:remote_content_explorer/features/movies/infrastructure/remote/mappers/remote_movie_mapper.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/models/remote_actor_model.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/models/remote_cast_response.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/models/remote_movie_model.dart';
 import 'package:remote_content_explorer/features/movies/infrastructure/remote/models/remote_movie_response.dart';
 
 void main() {
-  group('RemoteMovieMapper.movieModelFromJson', () {
+  group('RemoteMovieModel.fromJson', () {
     test(
       'given a valid JSON map when fromJson is called '
       'then all fields are parsed correctly',
@@ -29,8 +27,7 @@ void main() {
           'original_language': 'en',
         };
 
-        final RemoteMovieModel model =
-            RemoteMovieMapper.movieModelFromJson(json);
+        final RemoteMovieModel model = RemoteMovieModel.fromJson(json);
 
         expect(model.id, 1);
         expect(model.title, 'Batman');
@@ -40,7 +37,7 @@ void main() {
     );
   });
 
-  group('RemoteMovieMapper.movieResponseFromJson', () {
+  group('RemoteMovieResponse.fromJson', () {
     test(
       'given a valid JSON map when fromJson is called '
       'then results and pagination fields are parsed correctly',
@@ -69,8 +66,7 @@ void main() {
           ],
         };
 
-        final RemoteMovieResponse response =
-            RemoteMovieMapper.movieResponseFromJson(json);
+        final RemoteMovieResponse response = RemoteMovieResponse.fromJson(json);
 
         expect(response.page, 1);
         expect(response.totalPages, 10);
@@ -80,7 +76,7 @@ void main() {
     );
   });
 
-  group('RemoteActorMapper.actorModelFromJson', () {
+  group('RemoteActorModel.fromJson', () {
     test(
       'given a valid JSON map when fromJson is called '
       'then all fields including nullable profilePath are parsed correctly',
@@ -92,8 +88,7 @@ void main() {
           'profile_path': '/bale.jpg',
         };
 
-        final RemoteActorModel model =
-            RemoteActorMapper.actorModelFromJson(json);
+        final RemoteActorModel model = RemoteActorModel.fromJson(json);
 
         expect(model.id, 10);
         expect(model.name, 'Christian Bale');
@@ -102,7 +97,7 @@ void main() {
     );
   });
 
-  group('RemoteActorMapper.castResponseFromJson', () {
+  group('RemoteCastResponse.fromJson', () {
     test(
       'given a valid JSON map when fromJson is called '
       'then the id and cast list are parsed correctly',
@@ -119,8 +114,7 @@ void main() {
           ],
         };
 
-        final RemoteCastResponse response =
-            RemoteActorMapper.castResponseFromJson(json);
+        final RemoteCastResponse response = RemoteCastResponse.fromJson(json);
 
         expect(response.id, 99);
         expect(response.cast.length, 1);

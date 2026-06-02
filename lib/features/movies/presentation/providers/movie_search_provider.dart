@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:remote_content_explorer/core/errors/failures.dart';
 import 'package:remote_content_explorer/core/helpers/result.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/domain/usecases/search_movies.dart';
@@ -33,10 +32,5 @@ final FutureProvider<List<Movie>> movieSearchProvider =
         searchMoviesUseCaseProvider,
       );
       final Result<List<Movie>> result = await useCase.call(query);
-
-      return switch (result) {
-        Success<List<Movie>>(data: final List<Movie> movies) => movies,
-        FailureResult<List<Movie>>(failure: final Failure failure) =>
-          throw failure,
-      };
+      return result.getOrThrow();
     });

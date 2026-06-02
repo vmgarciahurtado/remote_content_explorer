@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/actor.dart';
+import 'package:remote_content_explorer/features/movies/presentation/widgets/network_image_with_fallback.dart';
 
 class ActorCard extends StatelessWidget {
   const ActorCard({required this.actor, super.key});
@@ -16,40 +17,15 @@ class ActorCard extends StatelessWidget {
             child: SizedBox(
               width: 90,
               height: 90,
-              child: actor.profilePath != null
-                  ? Image.network(
-                      actor.profilePath!,
-                      fit: BoxFit.cover,
-                      loadingBuilder:
-                          (
-                            BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress,
-                          ) {
-                            if (loadingProgress == null) return child;
-                            return const ColoredBox(
-                              color: Colors.black12,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                          },
-                      errorBuilder:
-                          (
-                            BuildContext context,
-                            Object error,
-                            StackTrace? stackTrace,
-                          ) => const ColoredBox(
-                            color: Colors.black12,
-                            child: Icon(Icons.person, size: 40),
-                          ),
-                    )
-                  : const ColoredBox(
-                      color: Colors.black12,
-                      child: Icon(Icons.person, size: 40),
-                    ),
+              child: NetworkImageWithFallback(
+                url: actor.profilePath,
+                showLoader: true,
+                loaderStrokeWidth: 2,
+                fallback: const ColoredBox(
+                  color: Colors.black12,
+                  child: Icon(Icons.person, size: 40),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 6),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:remote_content_explorer/core/constants/routes.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
+import 'package:remote_content_explorer/features/movies/presentation/widgets/network_image_with_fallback.dart';
 
 class PopularCard extends StatelessWidget {
   const PopularCard({required this.movie, super.key});
@@ -21,32 +22,14 @@ class PopularCard extends StatelessWidget {
           tag: 'movie-popular-${movie.id}',
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              movie.posterPath,
-              fit: BoxFit.cover,
-              loadingBuilder:
-                  (
-                    BuildContext context,
-                    Widget child,
-                    ImageChunkEvent? loadingProgress,
-                  ) {
-                    if (loadingProgress == null) return child;
-                    return const ColoredBox(
-                      color: Colors.black12,
-                      child: Center(
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    );
-                  },
-              errorBuilder:
-                  (
-                    BuildContext context,
-                    Object error,
-                    StackTrace? stackTrace,
-                  ) => const ColoredBox(
-                    color: Colors.black12,
-                    child: Icon(Icons.broken_image),
-                  ),
+            child: NetworkImageWithFallback(
+              url: movie.posterPath,
+              showLoader: true,
+              loaderStrokeWidth: 2,
+              fallback: const ColoredBox(
+                color: Colors.black12,
+                child: Icon(Icons.broken_image),
+              ),
             ),
           ),
         ),

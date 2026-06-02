@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
+import 'package:remote_content_explorer/features/movies/presentation/widgets/network_image_with_fallback.dart';
 
 class PosterAndTitle extends StatelessWidget {
   const PosterAndTitle({required this.movie, super.key});
@@ -17,22 +18,16 @@ class PosterAndTitle extends StatelessWidget {
             tag: 'movie-poster-${movie.id}',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(
-                movie.posterPath,
+              child: NetworkImageWithFallback(
+                url: movie.posterPath,
                 width: 110,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (
-                      BuildContext context,
-                      Object error,
-                      StackTrace? stackTrace,
-                    ) => const SizedBox(
-                      width: 110,
-                      child: ColoredBox(
-                        color: Colors.black12,
-                        child: Icon(Icons.movie, size: 48),
-                      ),
-                    ),
+                fallback: const SizedBox(
+                  width: 110,
+                  child: ColoredBox(
+                    color: Colors.black12,
+                    child: Icon(Icons.movie, size: 48),
+                  ),
+                ),
               ),
             ),
           ),

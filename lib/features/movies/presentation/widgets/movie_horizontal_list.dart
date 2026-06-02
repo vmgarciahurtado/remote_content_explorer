@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:remote_content_explorer/core/errors/failures.dart';
 import 'package:remote_content_explorer/features/movies/domain/entities/movie.dart';
 import 'package:remote_content_explorer/features/movies/presentation/providers/popular_movies_provider.dart';
+import 'package:remote_content_explorer/features/movies/presentation/widgets/content_shell.dart';
 import 'package:remote_content_explorer/features/movies/presentation/widgets/error_retry.dart';
-import 'package:remote_content_explorer/features/movies/presentation/widgets/list_shell.dart';
 import 'package:remote_content_explorer/features/movies/presentation/widgets/popular_card.dart';
 
 class MovieHorizontalList extends ConsumerStatefulWidget {
@@ -54,14 +54,16 @@ class _MovieHorizontalListState extends ConsumerState<MovieHorizontalList> {
     final List<Movie> movies = state.value ?? <Movie>[];
 
     if (state.isLoading && movies.isEmpty) {
-      return const ListShell(
+      return const ContentShell(
+        heightFactor: 0.20,
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (state.hasError && movies.isEmpty) {
       final Object? error = state.error;
-      return ListShell(
+      return ContentShell(
+        heightFactor: 0.20,
         child: ErrorRetry(
           compact: true,
           message: error is Failure ? error.userMessage : null,
@@ -70,7 +72,8 @@ class _MovieHorizontalListState extends ConsumerState<MovieHorizontalList> {
       );
     }
 
-    return ListShell(
+    return ContentShell(
+      heightFactor: 0.20,
       child: PageView.builder(
         padEnds: false,
         controller: _controller,
