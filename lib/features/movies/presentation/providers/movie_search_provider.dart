@@ -26,7 +26,18 @@ final FutureProvider<List<Movie>> movieSearchProvider =
         return const <Movie>[];
       }
 
-      await Future<void>.delayed(const Duration(milliseconds: 400));
+      final Completer<void> debounce = Completer<void>();
+      final Timer timer = Timer(
+        const Duration(milliseconds: 500),
+        debounce.complete,
+      );
+      ref.onDispose(() {
+        timer.cancel();
+        if (!debounce.isCompleted) {
+          debounce.completeError(StateError('search debounce cancelled'));
+        }
+      });
+      await debounce.future;
 
       final SearchMovies useCase = ref.watch<SearchMovies>(
         searchMoviesUseCaseProvider,
